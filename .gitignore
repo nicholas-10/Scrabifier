@@ -1,0 +1,27 @@
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+env/
+.venv/
+*.env/
+
+# IDE or editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.emacs.d/
+*.swp
+*~
+
+# Log files and error reports
+*.log
+*.error
+
+# Configuration files with sensitive information
+config.ini
+secrets.json
