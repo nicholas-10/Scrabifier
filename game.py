@@ -1,4 +1,5 @@
 import util
+import random
 from constants import *
 
 class Dictionary:
@@ -43,6 +44,31 @@ class LetterTile:
         return self.y
     def get_letter(self):
         return self.letter
+class Bag:
+    def __init__(self):
+        self.bag = {}
+        # deep copy
+        self.remainingTiles = 0
+        for k, v in INITIAL_SCRABBLE_BAG_COUNT.items():
+            self.remainingTiles += v
+            self.bag[k] = v
+    def get_n_tiles(self, n):
+        """
+        Gets n LetterTile objects, returns list of the LetterTile objects
+        """
+        keys = list(self.bag.keys())
+        # for k in self.bag.keys():
+        #     keys.append(k)
+        sampled_words = []
+        for i in range(n):
+            sample = random.choice(keys)
+            self.bag[sample] -= 1
+            self.remainingTiles -= 1
+            sampled_words.append(sample)
+            if self.bag[sample] == 0:
+                self.bag.pop(sample)
+        return sampled_words
+
 class Board:
     def __init__(self):
         self.board = [
@@ -69,9 +95,28 @@ class Board:
         self.board[LetterTile.get_y()][LetterTile.get_x()].set_letterTile(LetterTile)
     def check_valid_play(self, play):
         """
-        checks if play is valid or not given the state of the board. play is a list of LetterTile objects
+        checks if play is valid or not given the state of the board. play is a list of LetterTile objects. Returns True or False
         note: there is a bug where you cant play single letter as openning move. Should fix later
         """
+           
+        for p in play:
+            self.set_letterTile(p)
+        words = []
+        # verify in range
+        if (play[0].get_x() < 0 or play[0].get_y() < 0 or play[-1].get_x() > MAX_YINDEX or play[-1].get_y() > MAX_YINDEX):
+            return False
+
+        direction = ""
+        if len(play) == 1:
+            direction = "neutral"
+        else:
+            if (play[0].get_x() - play[1].get_x()) != 0:
+                direction = "horizontal"
+            elif (play[0].get_y() - play[1].get_y()) != 0:
+                direction = "vertical"
+
+        # verify that word is connected to other word
+        is_connected = False
         if self.round == 1:
             is_on_center = False
             for p in play:
@@ -80,24 +125,47 @@ class Board:
                     break
             if not is_on_center:
                 return False
-        for p in play:
-            self.set_letterTile(p)
-        words = []
-        direction = ""
-        if len(play) == 1:
-            direction = "Neutral"
-        else:
-            if play[0].get_x() < 0 or play[0].get_y() < 0 or play[-1].get_x() > MAX_YRANGE or play[-1].get_y() > MAX_YRANGE:
-                return False
-            if (play[0].get_x() - play[1].get_x()) != 0:
-                direction = "horizontal"
-            elif (play[0].get_y() - play[1].get_y()) != 0:
-                direction = "vertical"
+            elif is_on_center:
+                is_connected = True        
+        if play[0].get_y() != 0:
+            if self.board[play[0].get_y() - 1][play[0].get_x()].get_letterTile() != None:
+                is_connected = True
+        
+        if direction == "horizontal" or direction == "neutral":
+            if play[0].get_x() != 0:
+                if self.board[play[0].get_y()][play[0].get_x() - 1].get_letterTile() != None:
+                    is_connected = True
+            if play[-1].get_x() != MAX_XINDEX:
+                if self.board[play[-1].get_y()][play[-1].get_x()  + 1].get_letterTile() != None:
+                    is_connected = True
+            for i in range(0, len(play)):
+                if play[i].get_y() != MAX_YINDEX:
+                    if self.board[play[i].get_y() + 1][play[i].get_x()].get_letterTile() != None:
+                        is_connected = True
+                if play[i].get_y() != 0:
+                    if self.board[play[i].get_y() - 1][play[i].get_x()].get_letterTile() != None:
+                        is_connected = True
+        elif direction == "vertical":
+            if play[0].get_y() != 0:
+                print("FEEF")
+                if self.board[play[0].get_y() - 1][play[0].get_x()].get_letterTile() != None:
+                    is_connected = True
+            if play[-1].get_y() != MAX_YINDEX:
+                if self.board[play[-1].get_y() + 1][play[-1].get_x()].get_letterTile() != None:
+                    is_connected = True
+            for i in range(0, len(play)):
+                if play[i].get_x() != MAX_XINDEX:
+                    if self.board[play[i].get_y()][play[i].get_x() + 1].get_letterTile() != None:
+                        is_connected = True
+                if play[i].get_x() != 0:
+                    if self.board[play[i].get_y()][play[i].get_x() - 1].get_letterTile() != None:
+                        is_connected = True
+        if is_connected == False:
+            return False
         if direction == "horizontal":
             count = p.get_x()
             while (self.board[p.get_y()][count].get_letterTile() != None):
                 count -= 1
-                print(count)
                 if count < MIN_XRANGE:
                     count = -1
                     break
@@ -199,8 +267,12 @@ class Board:
         Accepts a list with LetterTiles to determine where the play is made
         Returns number of points
         """
-
+        t = False
         t = self.check_valid_play(play)
+        # "retakes" letter tiles if the word is not valid
+        # if t == False:
+        #     for p in play:
+        #         self.board[p.get_y()][ p.get_x()].set_letterTile(None)
         self.round += 1
         self.playerToMove = 1 + ((1 + self.round) % 2)
         return t
@@ -277,6 +349,45 @@ def test_case():
     print("GRANDIOSO Vertical starting at (13, 0) " + str(b.play_word(play)))
     b.print_board()
 
+    word = "RENT"
+    x  = 0
+    y = 0
+    play = []
+    for l in word:
+        play.append(LetterTile(l, x, y))
+        y += 1
+    print("RENT Vertical starting at (0, 0) " + str(b.play_word(play)))
+    b.print_board()
+
+    word = "RENT"
+    x  = 3
+    y = 0
+    play = []
+    for l in word:
+        play.append(LetterTile(l, x, y))
+        x += 1
+    print("ROLL Vertical starting at (3, 0) " + str(b.play_word(play)))
+    b.print_board()
+
+    word = "BENT"
+    x  = 14
+    y = 10
+    play = []
+    for l in word:
+        play.append(LetterTile(l, x, y))
+        y += 1
+    print("BENT Vertical starting at (14, 10) " + str(b.play_word(play)))
+    b.print_board()
+
+    word = "SENT"
+    x  = 9
+    y = 14
+    play = []
+    for l in word:
+        play.append(LetterTile(l, x, y))
+        x += 1
+    print("SENT Vertical starting at (14, 10) " + str(b.play_word(play)))
+    b.print_board()
 test_case()
 def MainLoop():
     d = Dictionary("dictionary.txt")
