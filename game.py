@@ -29,12 +29,15 @@ class BoardTile:
         return self.letterTile
     def get_letter(self):
         return self.letterTile.get_letter()
+    def get_type(self):
+        return self.type
 class LetterTile:
     def __init__(self, letter, x = -1, y = -1):
         self.letter = letter
         self.x = x
         self.y = y
         self.point = SCRABBLE_LETTER_POINTS[letter]
+        self.put_on_round = -1
     def set_x(self, x):
         self.x = x
     def set_y(self, y):
@@ -45,6 +48,12 @@ class LetterTile:
         return self.y
     def get_letter(self):
         return self.letter
+    def get_points(self):
+        return self.point
+    def get_put_on_round(self):
+        return self.put_on_round
+    def set_put_on_round(self, put_on_round):
+        self.put_on_round = put_on_round
 class Bag:
     def __init__(self):
         self.bag = {}
@@ -101,6 +110,7 @@ class Board:
            
         for p in play:
             self.set_letterTile(p)
+            p.set_put_on_round(self.round)
         words = []
         # verify in range
         if (play[0].get_x() < 0 or play[0].get_y() < 0 or play[-1].get_x() > MAX_YINDEX or play[-1].get_y() > MAX_YINDEX):
@@ -195,6 +205,30 @@ class Board:
                         break
                 if (len(word) != 1):
                     words.append(word)
+            
+            # check if connected
+            over = []
+            for p in play:
+                over.append(p)
+            count = p.get_x()
+            while (self.board[p.get_y()][count].get_letterTile() != None):
+                count -= 1
+                if count < MIN_XRANGE:
+                    count = -1
+                    break 
+            count += 1
+            while (self.board[p.get_y()][count].get_letterTile() != None):
+                for o in over:
+                    if o.get_x() == self.board[p.get_y()][count].get_letterTile().get_x() and o.get_y() == self.board[p.get_y()][count].get_letterTile().get_y():
+                        over.remove(o)                        
+                        break
+                count += 1
+                if count == MAX_XRANGE:
+                    break   
+            if len(over) != 0:
+                return False
+                
+
         elif direction == "vertical":
             count = p.get_y()
             while (self.board[count][p.get_x()].get_letterTile() != None):
@@ -230,6 +264,27 @@ class Board:
                         break
                 if (len(word) != 1):
                     words.append(word)
+            # check if connected
+            over = []
+            for p in play:
+                over.append(p)
+            count = p.get_y()
+            while (self.board[count][p.get_x()].get_letterTile() != None):
+                count -= 1
+                if count < MIN_YRANGE:
+                    count = -1
+                    break 
+            count += 1
+            while (self.board[count][p.get_x()].get_letterTile() != None):
+                for o in over:
+                    if o.get_x() == self.board[count][p.get_x()].get_letterTile().get_x() and o.get_y() == self.board[count][p.get_x()].get_letterTile().get_y():
+                        over.remove(o)                        
+                        break
+                count += 1
+                if count == MAX_YRANGE:
+                    break   
+            if len(over) != 0:
+                return False
         else:
             count = p.get_y()
             while (self.board[count][p.get_x()].get_letterTile() != None):
@@ -271,10 +326,229 @@ class Board:
         if (len(words) == 0):
             return False
         return True
-    def calculate_points(self, board, play):
+    def calculate_points(self, play):
         """
         Calculates score from a valid play. Returns score as an integer
         """
+        direction = ""
+        if len(play) == 1:
+            direction = "neutral"
+        else:
+            if (play[0].get_x() - play[1].get_x()) != 0:
+                direction = "horizontal"
+            elif (play[0].get_y() - play[1].get_y()) != 0:
+                direction = "vertical"
+
+        points = 0
+        if direction == "horizontal":
+            p = play[0]
+            count = p.get_x()
+            while (self.board[p.get_y()][count].get_letterTile() != None):
+                count -= 1
+                if count < MIN_XRANGE:
+                    count = -1
+                    break
+            count += 1
+            multiplier = 1
+            
+            while (self.board[p.get_y()][count].get_letterTile() != None):
+                if self.board[p.get_y()][count].get_letterTile().get_put_on_round() == self.round:
+                    if self.board[p.get_y()][count].get_type() == DL:
+                        points += 2 * self.board[p.get_y()][count].get_letterTile().get_points()
+                    elif self.board[p.get_y()][count].get_type() == TL:
+                        points += 3 * self.board[p.get_y()][count].get_letterTile().get_points()
+                    elif self.board[p.get_y()][count].get_type() == DW:
+                        points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                        multiplier *= 2
+                    elif self.board[p.get_y()][count].get_type() == TW:
+                        points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                        multiplier *= 3
+                    elif self.board[p.get_y()][count].get_type() == RT or self.board[p.get_y()][count].get_type() == CT:
+                        points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                else:
+                    points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                count += 1
+                if count == MAX_XRANGE:
+                    break
+            points *= multiplier
+            for p in play:
+                count = p.get_y()
+                while (self.board[count][p.get_x()].get_letterTile() != None):
+                    count -= 1
+                    if count < MIN_YRANGE:
+                        count = -1
+                        break
+                count += 1
+                multiplier = 1
+                temp_points = 0
+                l = 0
+                while (self.board[count][p.get_x()].get_letterTile() != None):
+                    l += 1
+                    if self.board[count][p.get_x()].get_letterTile().get_put_on_round() == self.round:
+                        if self.board[count][p.get_x()].get_type() == DL:
+                            temp_points += (2 * self.board[count][p.get_x()].get_letterTile().get_points())
+                        elif self.board[count][p.get_x()].get_type() == TL:
+                            temp_points += (3 * self.board[count][p.get_x()].get_letterTile().get_points())
+                        elif self.board[count][p.get_x()].get_type() == DW:
+                            temp_points +=  (self.board[count][p.get_x()].get_letterTile().get_points())
+                            multiplier *= 2
+                        elif self.board[count][p.get_x()].get_type() == TW:
+                            temp_points +=  (self.board[count][p.get_x()].get_letterTile().get_points())
+                            multiplier *= 3
+                        elif self.board[count][p.get_x()].get_type() == RT or self.board[count][p.get_x()].get_type() == CT:
+                            temp_points +=  self.board[count][p.get_x()].get_letterTile().get_points()
+                    else:
+                        temp_points +=  self.board[count][p.get_x()].get_letterTile().get_points()
+                    count += 1
+                    if count == MAX_YRANGE:
+                        break
+                if l != 1:
+                    points = points + (temp_points * multiplier)
+            if len(play) == 7:
+                points += 50
+
+
+        elif direction == "vertical":
+            p = play[0]
+            count = p.get_y()
+            while (self.board[count][p.get_x()].get_letterTile() != None):
+                count -= 1
+                if count < MIN_YRANGE:
+                    count = -1
+                    break
+            count += 1
+            multiplier = 1
+            while (self.board[count][p.get_x()].get_letterTile() != None):
+                if self.board[count][p.get_x()].get_letterTile().get_put_on_round() == self.round:
+
+                    if self.board[count][p.get_x()].get_type() == DL:
+                        points += (2 * self.board[count][p.get_x()].get_letterTile().get_points())
+                    elif self.board[count][p.get_x()].get_type() == TL:
+                        points += (3 * self.board[count][p.get_x()].get_letterTile().get_points())
+                    elif self.board[count][p.get_x()].get_type() == DW:
+                        points += ( self.board[count][p.get_x()].get_letterTile().get_points())
+                        multiplier *= 2
+                    elif self.board[count][p.get_x()].get_type() == TW:
+                        points += ( self.board[count][p.get_x()].get_letterTile().get_points())
+                        multiplier *= 3
+                    elif self.board[count][p.get_x()].get_type() == RT or self.board[count][p.get_x()].get_type() == CT:
+                        points += ( self.board[count][p.get_x()].get_letterTile().get_points())
+                else:
+                    points += ( self.board[count][p.get_x()].get_letterTile().get_points())
+                count += 1
+                if count == MAX_YRANGE:
+                    break
+            
+            points *= multiplier
+            for p in play:
+
+                count = p.get_x()
+                while (self.board[p.get_y()][count].get_letterTile() != None):
+                    count -= 1
+                    if count < MIN_XRANGE:
+                        count = -1
+                        break
+
+                count += 1
+                temp_points = 0
+                multiplier = 1
+
+                l = 0
+                while (self.board[p.get_y()][count].get_letterTile() != None):
+                    l += 1
+                    if self.board[p.get_y()][count].get_letterTile().get_put_on_round() == self.round:
+                        if self.board[p.get_y()][count].get_type() == DL:
+                            temp_points += (2 * self.board[p.get_y()][count].get_letterTile().get_points())
+                        elif self.board[p.get_y()][count].get_type() == TL:
+                            temp_points += (3 * self.board[p.get_y()][count].get_letterTile().get_points())
+                        elif self.board[p.get_y()][count].get_type() == DW:
+                            temp_points += ( self.board[p.get_y()][count].get_letterTile().get_points())
+                            multiplier *= 2
+                        elif self.board[p.get_y()][count].get_type() == TW:
+                            temp_points += ( self.board[p.get_y()][count].get_letterTile().get_points())
+                            multiplier *= 3
+                        elif self.board[p.get_y()][count].get_type() == RT or self.board[p.get_y()][count].get_type() == CT:
+                            temp_points += ( self.board[p.get_y()][count].get_letterTile().get_points())
+                    else:
+                        temp_points += ( self.board[p.get_y()][count].get_letterTile().get_points())
+                    count += 1
+                    if count == MAX_XRANGE:
+                        break
+                if l != 1:
+                    points = points + (multiplier * temp_points)
+            if len(play) == 7:
+                points += 50
+        elif  direction == "neutral":
+            p = play[0]
+            count = p.get_y()
+            while (self.board[count][p.get_x()].get_letterTile() != None):
+                count -= 1
+                if count < MIN_YRANGE:
+                    count = -1
+                    break
+            count += 1
+            multiplier = 1
+            temp_points = 0
+            l = 0
+            while (self.board[count][p.get_x()].get_letterTile() != None):
+                l += 1
+                if self.board[count][p.get_x()].get_letterTile().get_put_on_round() == self.round:
+
+                    if self.board[count][p.get_x()].get_type() == DL:
+                        temp_points += (2 * self.board[count][p.get_x()].get_letterTile().get_points())
+                    elif self.board[count][p.get_x()].get_type() == TL:
+                        temp_points += (3 * self.board[count][p.get_x()].get_letterTile().get_points())
+                    elif self.board[count][p.get_x()].get_type() == DW:
+                        temp_points += ( self.board[count][p.get_x()].get_letterTile().get_points())
+                        multiplier *= 2
+                    elif self.board[count][p.get_x()].get_type() == TW:
+                        temp_points += ( self.board[count][p.get_x()].get_letterTile().get_points())
+                        multiplier *= 3
+                    elif self.board[count][p.get_x()].get_type() == RT or self.board[count][p.get_x()].get_type() == CT:
+                        temp_points += ( self.board[count][p.get_x()].get_letterTile().get_points())
+                else:
+                    temp_points += ( self.board[count][p.get_x()].get_letterTile().get_points())
+                count += 1
+                if count == MAX_YRANGE:
+                    break
+            if l != 1:
+                points += (temp_points * multiplier)
+            # points *= multiplier
+            p = play[0]
+            count = p.get_x()
+            while (self.board[p.get_y()][count].get_letterTile() != None):
+                count -= 1
+                if count < MIN_XRANGE:
+                    count = -1
+                    break
+            count += 1
+            multiplier = 1
+            temp_points = 0
+            l = 0
+            while (self.board[p.get_y()][count].get_letterTile() != None):
+                l += 1
+                if self.board[p.get_y()][count].get_letterTile().get_put_on_round() == self.round:
+                    if self.board[p.get_y()][count].get_type() == DL:
+                        temp_points += 2 * self.board[p.get_y()][count].get_letterTile().get_points()
+                    elif self.board[p.get_y()][count].get_type() == TL:
+                        temp_points += 3 * self.board[p.get_y()][count].get_letterTile().get_points()
+                    elif self.board[p.get_y()][count].get_type() == DW:
+                        temp_points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                        multiplier *= 2
+                    elif self.board[p.get_y()][count].get_type() == TW:
+                        temp_points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                        multiplier *= 3
+                    elif self.board[p.get_y()][count].get_type() == RT or self.board[p.get_y()][count].get_type() == CT:
+                        temp_points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                else:
+                    temp_points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                count += 1
+                if count == MAX_XRANGE:
+                    break
+            if l != 1:
+                points += (multiplier * temp_points)
+
+        return points
     def play_word(self, play):
         """
         Accepts a list with LetterTiles to determine where the play is made
@@ -282,13 +556,21 @@ class Board:
         """
         t = False
         t = self.check_valid_play(play)
+        
         # "retakes" letter tiles if the word is not valid
-        # if t == False:
-        #     for p in play:
-        #         self.board[p.get_y()][ p.get_x()].set_letterTile(None)
-        self.round += 1
+        if t == False:
+            for p in play:
+                self.board[p.get_y()][ p.get_x()].set_letterTile(None)
         self.playerToMove = 1 + ((1 + self.round) % 2)
-        return t
+        pts = 0
+        if t == True:
+
+
+            pts =  (self.calculate_points(play))
+        else:
+            pts = -1
+        self.round += 1
+        return pts
     def print_board(self):
         for row in self.board:
             for t in row:
@@ -419,8 +701,27 @@ def test_case():
     for l in word:
         play.append(LetterTile(l, x, y))
         x += 1
-    print("AA Vertical starting at (14, 2) " + str(b.play_word(play)))
+    print("AA Horizontal starting at (14, 2) " + str(b.play_word(play)))
     b.print_board()
+
+    word = "N"
+    x  = 11
+    y = 8
+    play = []
+    for l in word:
+        play.append(LetterTile(l, x, y))
+    print("IN Vertical starting at (11, 8) " + str(b.play_word(play)))
+    b.print_board()
+    play = [LetterTile("E", 9, 3), LetterTile("M", 11, 3), LetterTile("O", 12, 3)]
+
+    print("DE - MON Horizontal starting at (8, 3) " + str(b.play_word(play)))
+    b.print_board()
+
+    play = [LetterTile("O", 2, 11), LetterTile("O", 2, 9), LetterTile("B", 2, 8)]
+
+    print("BO - ON Vertical starting at (2, 8) " + str(b.play_word(play)))
+    b.print_board()
+
 test_case()
 def MainLoop():
     d = Dictionary("dictionary.txt")
