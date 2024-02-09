@@ -34,6 +34,7 @@ class LetterTile:
         self.letter = letter
         self.x = x
         self.y = y
+        self.point = SCRABBLE_LETTER_POINTS[letter]
     def set_x(self, x):
         self.x = x
     def set_y(self, y):
@@ -96,7 +97,6 @@ class Board:
     def check_valid_play(self, play):
         """
         checks if play is valid or not given the state of the board. play is a list of LetterTile objects. Returns True or False
-        note: there is a bug where you cant play single letter as openning move. Should fix later
         """
            
         for p in play:
@@ -104,6 +104,7 @@ class Board:
         words = []
         # verify in range
         if (play[0].get_x() < 0 or play[0].get_y() < 0 or play[-1].get_x() > MAX_YINDEX or play[-1].get_y() > MAX_YINDEX):
+            print("NOT IN RANGE")
             return False
 
         direction = ""
@@ -133,6 +134,7 @@ class Board:
         
         if direction == "horizontal" or direction == "neutral":
             if play[0].get_x() != 0:
+                print(play[0].get_x())
                 if self.board[play[0].get_y()][play[0].get_x() - 1].get_letterTile() != None:
                     is_connected = True
             if play[-1].get_x() != MAX_XINDEX:
@@ -147,7 +149,6 @@ class Board:
                         is_connected = True
         elif direction == "vertical":
             if play[0].get_y() != 0:
-                print("FEEF")
                 if self.board[play[0].get_y() - 1][play[0].get_x()].get_letterTile() != None:
                     is_connected = True
             if play[-1].get_y() != MAX_YINDEX:
@@ -233,23 +234,35 @@ class Board:
             count = p.get_y()
             while (self.board[count][p.get_x()].get_letterTile() != None):
                 count -= 1
+                if count < MIN_YRANGE:
+                    count = -1
+                    break
+
             count += 1
             word = ""
             while (self.board[count ][p.get_x()].get_letterTile() != None):
                 word += self.board[count][p.get_x()].get_letter()
                 count += 1
-            if (len(word) != 1):
+                if count == MAX_XRANGE:
+                    break
+            if len(word) != 1:
                 words.append(word)
 
             count = p.get_x()
             while (self.board[p.get_y()][count].get_letterTile() != None):
                 count -= 1
+                if  count < MIN_YRANGE:
+                    count = -1
+                    break
             count += 1
             word = ""
             while (self.board[p.get_y()][count].get_letterTile() != None):
+                print(self.board[p.get_y()][count].get_letter())
                 word += self.board[p.get_y()][count].get_letter()
                 count += 1
-            if (len(word) != 1):
+                if count == MAX_XRANGE:
+                    break
+            if len(word) != 1:
                 words.append(word)
         print(words)
         for word in words:
@@ -260,7 +273,7 @@ class Board:
         return True
     def calculate_points(self, board, play):
         """
-        Calculates score from a valid play
+        Calculates score from a valid play. Returns score as an integer
         """
     def play_word(self, play):
         """
@@ -387,6 +400,26 @@ def test_case():
         play.append(LetterTile(l, x, y))
         x += 1
     print("SENT Vertical starting at (14, 10) " + str(b.play_word(play)))
+    b.print_board()
+
+    word = "BENT"
+    x  = 14
+    y = 10
+    play = []
+    for l in word:
+        play.append(LetterTile(l, x, y))
+        y += 1
+    print("BENT Vertical starting at (14, 10) " + str(b.play_word(play)))
+    b.print_board()
+
+    word = "A"
+    x  = 14
+    y = 2
+    play = []
+    for l in word:
+        play.append(LetterTile(l, x, y))
+        x += 1
+    print("AA Vertical starting at (14, 2) " + str(b.play_word(play)))
     b.print_board()
 test_case()
 def MainLoop():
