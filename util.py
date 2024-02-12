@@ -1,7 +1,7 @@
 try:
     import pygtrie as trie
 except ImportError:
-    print("install dulu pygtrie")
+    print("Install dulu pygtrie")
 
 class Trie:
     """

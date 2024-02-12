@@ -564,21 +564,23 @@ class Board:
         self.playerToMove = 1 + ((1 + self.round) % 2)
         pts = 0
         if t == True:
-
-
             pts =  (self.calculate_points(play))
         else:
             pts = -1
         self.round += 1
         return pts
     def print_board(self):
-        for row in self.board:
+        print("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4")
+        for i, row in enumerate(self.board):
+            print(str(i % 10) + " ", end="")
             for t in row:
                 if t.get_letterTile() == None:
-                    print("0 ", end="")
+                    print("- ", end="")
                 else:
                     print(t.get_letter() + " ", end="")
             print("")
+        print("")
+
 # put into separate file "test_cases.py" later   
 def test_case():
     word = "ENTAILS"
@@ -712,6 +714,7 @@ def test_case():
         play.append(LetterTile(l, x, y))
     print("IN Vertical starting at (11, 8) " + str(b.play_word(play)))
     b.print_board()
+
     play = [LetterTile("E", 9, 3), LetterTile("M", 11, 3), LetterTile("O", 12, 3)]
 
     print("DE - MON Horizontal starting at (8, 3) " + str(b.play_word(play)))
@@ -720,6 +723,16 @@ def test_case():
     play = [LetterTile("O", 2, 11), LetterTile("O", 2, 9), LetterTile("B", 2, 8)]
 
     print("BO - ON Vertical starting at (2, 8) " + str(b.play_word(play)))
+    b.print_board()
+
+    play = [LetterTile("J", 0, 10), LetterTile("A", 0, 11)]
+
+    print("JA - R Vertical starting at (0, 10) " + str(b.play_word(play)))
+    b.print_board()
+
+    play = [LetterTile("J", 2, 10), LetterTile("A", 2, 11), LetterTile("K", 2, 13)]
+
+    print("JA - N - K Vertical starting at (2, 10) " + str(b.play_word(play)))
     b.print_board()
 
 test_case()
