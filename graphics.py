@@ -1,11 +1,12 @@
 from tkinter import *
 from tkinter import ttk
+from constants import *
 
 window = Tk()
 style = ttk.Style()
 window.resizable(0, 0)
 window.title("Scrabble")
-window.geometry("%dx%d%+d%+d" % (600, 600, 0, 0))
+window.geometry("%dx%d%+d%+d" % (700, 700, 0, 0))
 
 board_frame = ttk.Frame(window)
 bar_frame = ttk.Frame(window)
@@ -53,6 +54,24 @@ board = [
         ["TW", "RT", "RT", "DL", "RT", "RT", "RT", "TW", "RT", "RT", "RT", "DL", "RT", "RT", "TW"]
         ]
 
+tile = [
+        ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+        ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "P", "R", "E", "S", "S"],
+        ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "O", "-", "-", "-", "-"],
+        ["-", "-", "-", "-", "-", "-", "-", "G", "R", "A", "P", "E", "S", "-", "-"],
+        ["-", "-", "-", "-", "-", "-", "-", "H", "-", "-", "-", "-", "H", "-", "-"],
+        ["-", "-", "-", "-", "-", "-", "-", "O", "R", "A", "L", "-", "O", "-", "-"],
+        ["-", "-", "-", "J", "E", "S", "T", "S", "-", "-", "E", "-", "O", "-", "-"],
+        ["-", "-", "-", "U", "-", "-", "-", "T", "E", "S", "T", "-", "T", "-", "-"],
+        ["-", "B", "I", "G", "-", "-", "-", "S", "-", "-", "-", "-", "E", "-", "-"],
+        ["-", "-", "-", "G", "-", "-", "-", "-", "-", "-", "-", "-", "R", "-", "-"],
+        ["-", "-", "-", "L", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+        ["S", "-", "-", "I", "N", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+        ["U", "-", "-", "N", "O", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+        ["B", "R", "A", "G", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+        ["S", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
+        ]
+
 board_colors = {
     "CT": "deeppink1",
     "DL": "cyan",
@@ -61,22 +80,48 @@ board_colors = {
     "TW": "orange"
 }
 
-square_size = 30
+tile_size = 30
+square_size = 35
 for row in range(len(board)):
     for col in range(len(board[row])):
         tile_type = board[row][col]
         color = board_colors.get(tile_type, "beige") 
         square = Canvas(board_frame, width=square_size, height=square_size, bg=color, highlightthickness=0)
         if(board[row][col] != "RT" and board[row][col] != "CT"):
-            square.create_text(square_size // 2, square_size // 2, text=board[row][col])
+            square.create_text(square_size // 2, square_size // 2, text=board[row][col], font=("Helvetica", 10))
         square.create_rectangle(0, 0, square_size, square_size, outline="black")
         square.grid(row=row, column=col)
+
+for row in range(len(tile)):
+    for col in range(len(tile[row])):
+        if(tile[row][col] != "-"):
+            tile_type = board[row][col]
+            color = board_colors.get(tile_type, "beige") 
+            square = Canvas(board_frame, width=tile_size, height=tile_size, bg="burlywood1", highlightthickness=0)
+            score = SCRABBLE_LETTER_POINTS.get(tile[row][col], 0)
+            square.create_text(tile_size - 6, tile_size - 6, text=f"{score}", font=("Helvetica", 6))
+            square.create_text(tile_size // 2, tile_size // 2, text=tile[row][col], font=("Helvetica", 10))
+            square.create_rectangle(0, 0, tile_size, tile_size, outline="black")
+            square.grid(row=row, column=col)
+
+hand = ["Z", "Q", "J", "Y", "Q", "K", "Z"]
+
 tile_frame.grid_columnconfigure(0, weight = 1)
 tile_frame.grid_columnconfigure(9, weight = 1)
 
 for col in range(7):
     square = Canvas(tile_frame, width=square_size, height=square_size, bg='beige', highlightthickness=0)
     square.create_rectangle(0, 0, square_size, square_size, outline="black")
+    square.grid(row=0, column=col+1)
+
+for col, letter in enumerate(hand):
+    square = Canvas(tile_frame, width=tile_size, height=tile_size, bg='burlywood', highlightthickness=0)
+    square.create_rectangle(0, 0, tile_size, tile_size, outline="black")
+    square.grid(row=0, column=col+1)
+    score = SCRABBLE_LETTER_POINTS.get(letter.upper(), 0)
+    square.create_text(tile_size - 6, tile_size - 6, text=f"{score}", font=("Helvetica", 6))
+    square.create_text(tile_size // 2, tile_size // 2, text=f"{letter}", font=("Helvetica", 10))
+    square.create_rectangle(0, 0, tile_size, tile_size, outline="black")
     square.grid(row=0, column=col+1)
 
 window.mainloop()
