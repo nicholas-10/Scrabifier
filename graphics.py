@@ -86,62 +86,24 @@ class DragTileManager():
 
     def on_drag_end(self, event):
         if self.tile:
-            x = event.widget.winfo_x()
-            y = event.widget.winfo_y()
+            x, y = event.widget.winfo_x(), event.widget.winfo_y()
+            board_width, board_height = self.frame.winfo_width(), self.frame.winfo_height()
+            grid_col, grid_row = min(x // square_size, 14), min(y // square_size, 14)
 
-            board_width = self.frame.winfo_width()
-            board_height = self.frame.winfo_height()
-            grid_col = min(x // square_size, 14)
-            grid_row = min(y // square_size, 14)
-
-            if(y // square_size == 15 and x // square_size >= 4 and x // square_size <= 10):
-                grid_col = x // square_size
-                grid_row = 15
-
+            if y // square_size == 15 and 4 <= x // square_size <= 10:
+                grid_col, grid_row = x // square_size, 15
                 print("Tile placed at position:", grid_col, grid_row)
-
-                snap_x = grid_col * square_size
-                snap_y = grid_row * square_size
-
-                snap_x = min(max(snap_x, 0), board_width - tile_size)
-                snap_y = min(max(snap_y, 0), board_height - tile_size)
-
-                snap_x += 2.5
-                snap_y += 12.5
-
-                event.widget.place_configure(x=snap_x, y=snap_y)
+                snap_x, snap_y = min(max(grid_col * square_size, 0), board_width - tile_size) + 2.5, min(max(grid_row * square_size, 0), board_height - tile_size) + 12.5
             else:
                 print("Tile placed at position:", grid_col, grid_row)
-                
-                if(tile[grid_row][grid_col] != "-"):
-                    grid_col = self.ori_x // square_size
-                    grid_row = self.ori_y // square_size
-
-                    snap_x = grid_col * square_size
-                    snap_y = grid_row * square_size
-
-                    snap_x = min(max(snap_x, 0), board_width - tile_size)
-                    snap_y = min(max(snap_y, 0), board_height - tile_size)
-
-                    snap_x += 2.5
-                    if(self.ori_y // square_size == 15):
-                        snap_y += 12.5
-                    else:
-                        snap_y += 2.5
-
-                    event.widget.place_configure(x=snap_x, y=snap_y)
+                if tile[grid_row][grid_col] != "-":
+                    grid_col, grid_row = self.ori_x // square_size, self.ori_y // square_size
+                    snap_x, snap_y = min(max(grid_col * square_size, 0), board_width - tile_size) + 2.5, (min(max(grid_row * square_size, 0), board_height - tile_size) + 12.5) if self.ori_y // square_size == 15 else min(max(grid_row * square_size, 0), board_height - tile_size) + 2.5
                 else:
-                    snap_x = grid_col * square_size
-                    snap_y = grid_row * square_size
+                    snap_x, snap_y = min(max(grid_col * square_size, 0), board_width - tile_size) + 2.5, min(max(grid_row * square_size, 0), board_height - tile_size) + 2.5
 
-                    snap_x = min(max(snap_x, 0), board_width - tile_size)
-                    snap_y = min(max(snap_y, 0), board_height - tile_size)
-
-                    snap_x += 2.5
-                    snap_y += 2.5
-
-                    event.widget.place_configure(x=snap_x, y=snap_y)
-        self.tile = None
+            event.widget.place_configure(x=snap_x, y=snap_y)
+            self.tile = None
 
 window = Tk()
 style = ttk.Style()
