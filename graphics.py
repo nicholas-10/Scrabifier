@@ -137,7 +137,6 @@ for row in range(len(tile)):
             square.create_text(tile_size // 2, tile_size // 2, text=tile[row][col], font=("Helvetica", 10))
             square.create_rectangle(0, 0, tile_size, tile_size, outline="black")
             square.grid(row=row, column=col)
-            drag_tile_manager.add_tile(square)
 
 hand = ["Z", "Q", "J", "Y", "Q", "K", "Z"]
 
