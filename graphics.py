@@ -2,6 +2,40 @@ from tkinter import *
 from tkinter import ttk
 from constants import *
 
+from tkinter import Canvas
+Canvas.tag_raise = Canvas.tkraise
+del Canvas.tkraise, Canvas.lift
+
+class DragTileManager():
+    def __init__(self):
+        self.tile = None
+        self.start_x = 0
+        self.start_y = 0
+
+    def add_tile(self, tile):
+        tile.bind("<ButtonPress-1>", self.on_drag_start)
+        tile.bind("<B1-Motion>", self.on_drag)
+        tile.bind("<ButtonRelease-1>", self.on_drag_end)
+        tile.configure(cursor="hand1")
+
+    def on_drag_start(self, event):
+        self.tile = event.widget
+        self.start_x = event.x
+        self.start_y = event.y
+        self.tile.lift()
+        self.tile.tk.call("raise", self.tile)
+
+    def on_drag(self, event):
+        if self.tile:
+            x = event.widget.winfo_x() - self.start_x + event.x
+            y = event.widget.winfo_y() - self.start_y + event.y
+            event.widget.place_configure(x=x, y=y)
+
+    def on_drag_end(self, event):
+        self.tile = None
+
+drag_tile_manager = DragTileManager()
+
 window = Tk()
 style = ttk.Style()
 window.resizable(0, 0)
@@ -56,7 +90,7 @@ board = [
 
 tile = [
         ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
-        ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "P", "R", "E", "S", "S"],
+        ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "?", "R", "E", "S", "S"],
         ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "O", "-", "-", "-", "-"],
         ["-", "-", "-", "-", "-", "-", "-", "G", "R", "A", "P", "E", "S", "-", "-"],
         ["-", "-", "-", "-", "-", "-", "-", "H", "-", "-", "-", "-", "H", "-", "-"],
@@ -68,7 +102,7 @@ tile = [
         ["-", "-", "-", "L", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
         ["S", "-", "-", "I", "N", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
         ["U", "-", "-", "N", "O", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
-        ["B", "R", "A", "G", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+        ["?", "R", "A", "G", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
         ["S", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"]
         ]
 
@@ -103,6 +137,7 @@ for row in range(len(tile)):
             square.create_text(tile_size // 2, tile_size // 2, text=tile[row][col], font=("Helvetica", 10))
             square.create_rectangle(0, 0, tile_size, tile_size, outline="black")
             square.grid(row=row, column=col)
+            drag_tile_manager.add_tile(square)
 
 hand = ["Z", "Q", "J", "Y", "Q", "K", "Z"]
 
@@ -122,6 +157,6 @@ for col, letter in enumerate(hand):
     square.create_text(tile_size - 6, tile_size - 6, text=f"{score}", font=("Helvetica", 6))
     square.create_text(tile_size // 2, tile_size // 2, text=f"{letter}", font=("Helvetica", 10))
     square.create_rectangle(0, 0, tile_size, tile_size, outline="black")
-    square.grid(row=0, column=col+1)
+    drag_tile_manager.add_tile(square)
 
 window.mainloop()
