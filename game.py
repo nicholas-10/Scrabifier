@@ -1,7 +1,6 @@
 import util
 import random
 from constants import *
-
 class Dictionary:
     """
     Dictionary object for game
@@ -328,7 +327,7 @@ class Board:
         return True
     def calculate_points(self, play):
         """
-        Calculates score from a valid play. Returns score as an integer
+        Calculates score from a valid play. Returns score as an integer if valid or -1 if not
         """
         direction = ""
         if len(play) == 1:
@@ -734,6 +733,11 @@ def test_case():
 
     print("JA - N - K Vertical starting at (2, 10) " + str(b.play_word(play)))
     b.print_board()
+
+    play = [LetterTile("O", 12, 1), LetterTile("O", 9, 3)]
+    print("O - O Vertical starting at (12, 1) " + str(b.play_word(play)))
+    b.print_board()
+
 
 test_case()
 def MainLoop():
