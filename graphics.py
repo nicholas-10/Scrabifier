@@ -57,12 +57,14 @@ class DragTileManager():
         self.start_x = 0
         self.start_y = 0
         self.frame = frame
+        self.letters = {}
 
-    def add_tile(self, tile):
+    def add_tile(self, tile, letter):
         tile.bind("<ButtonPress-1>", self.on_drag_start)
         tile.bind("<B1-Motion>", self.on_drag)
         tile.bind("<ButtonRelease-1>", self.on_drag_end)
         tile.configure(cursor="hand1")
+        self.letters[tile] = letter
 
     def on_drag_start(self, event):
         self.tile = event.widget
@@ -89,19 +91,37 @@ class DragTileManager():
             x, y = event.widget.winfo_x(), event.widget.winfo_y()
             board_width, board_height = self.frame.winfo_width(), self.frame.winfo_height()
             grid_col, grid_row = min(x // square_size, 14), min(y // square_size, 14)
-
             if y // square_size == 15 and 4 <= x // square_size <= 10:
                 grid_col, grid_row = x // square_size, 15
-                print("Tile placed at position:", grid_col, grid_row)
-                snap_x, snap_y = min(max(grid_col * square_size, 0), board_width - tile_size) + 2.5, min(max(grid_row * square_size, 0), board_height - tile_size) + 12.5
+                if hand[grid_col - 4] != "-":
+                    grid_col, grid_row = self.ori_x // square_size, self.ori_y // square_size
+                    snap_x, snap_y = min(max(grid_col * square_size, 0), board_width - tile_size) + 2.5, (min(max(grid_row * square_size, 0), board_height - tile_size) + 12.5) if self.ori_y // square_size == 15 else min(max(grid_row * square_size, 0), board_height - tile_size) + 2.5
+                else:
+                    print(f"Tile '{self.letters[event.widget]}' placed at hand:", grid_col - 4)
+                    hand[grid_col - 4] = self.letters[event.widget]
+                    snap_x, snap_y = min(max(grid_col * square_size, 0), board_width - tile_size) + 2.5, min(max(grid_row * square_size, 0), board_height - tile_size) + 12.5
+                    grid_col, grid_row = self.ori_x // square_size, self.ori_y // square_size
+                    if grid_row == 15:
+                        print(f"Tile '{self.letters[event.widget]}' gone from hand:", grid_col - 4)
+                        hand[grid_col - 4] = "-"
+                    else:
+                        print(f"Tile '{self.letters[event.widget]}' gone from board:", grid_col, grid_row)
+                        tile[grid_row][grid_col] = "-"
             else:
-                print("Tile placed at position:", grid_col, grid_row)
                 if tile[grid_row][grid_col] != "-":
                     grid_col, grid_row = self.ori_x // square_size, self.ori_y // square_size
                     snap_x, snap_y = min(max(grid_col * square_size, 0), board_width - tile_size) + 2.5, (min(max(grid_row * square_size, 0), board_height - tile_size) + 12.5) if self.ori_y // square_size == 15 else min(max(grid_row * square_size, 0), board_height - tile_size) + 2.5
                 else:
+                    print(f"Tile '{self.letters[event.widget]}' placed at position:", grid_col, grid_row)
+                    tile[grid_row][grid_col] = self.letters[event.widget]
                     snap_x, snap_y = min(max(grid_col * square_size, 0), board_width - tile_size) + 2.5, min(max(grid_row * square_size, 0), board_height - tile_size) + 2.5
-
+                    grid_col, grid_row = self.ori_x // square_size, self.ori_y // square_size
+                    if grid_row == 15:
+                        print(f"Tile '{self.letters[event.widget]}' gone from hand:", grid_col - 4)
+                        hand[grid_col - 4] = "-"
+                    else:
+                        print(f"Tile '{self.letters[event.widget]}' gone from board:", grid_col, grid_row)
+                        tile[grid_row][grid_col] = "-"
             event.widget.place_configure(x=snap_x, y=snap_y)
             self.tile = None
 
@@ -179,6 +199,6 @@ for col, letter in enumerate(hand):
     square.create_text(tile_size - 6, tile_size - 6, text=f"{score}", font=("Helvetica", 6))
     square.create_text(tile_size // 2, tile_size // 2, text=f"{letter}", font=("Helvetica", 10))
     square.create_rectangle(0, 0, tile_size, tile_size, outline="black")
-    drag_tile_manager.add_tile(square)
+    drag_tile_manager.add_tile(square, letter)
 
 window.mainloop()
