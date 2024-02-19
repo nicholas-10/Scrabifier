@@ -20,7 +20,7 @@ hashmap=dict((i,[set(),set()]) for i in hashkey)
 allLengthHashmap=dict()
 for i in range(1,18,1):
     allLengthHashmap[i]=hashmap.copy()
-#Backtrack 2x
+#Backtrack 2x, might need optimization
 for i in range(0,len(strings),1):
     for j in range(1,len(strings[i]),1):
         if strings[i][j] not in allLengthHashmap[len(strings)][strings[i][j-1]][0]:
