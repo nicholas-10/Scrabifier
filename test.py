@@ -8,9 +8,9 @@ def test_case(print_board = False):
     set:
     points = (b.play_word(play))
     Use to check if points equals proper value:
-    (str(points) + " is " + str(points == 13))
+    ("returns " +str(points) + " which is " + str(points == 13))
     or use the following if the play is not valid
-    (str(points) + " is " + str(True if points == -1 else False))
+    ("returns " +str(points) + " which is " + str(True if points == -1 else False))
     """
     word = "ENTAILS"
     x  = 7
@@ -21,7 +21,7 @@ def test_case(print_board = False):
         x += 1
     b = Board()
     points = (b.play_word(play))
-    print("ENTAILS Horizontal starting at Center " +  str(points) + " is " + str(points == 58))
+    print("ENTAILS Horizontal starting at Center " +  "returns " +str(points) + " which is " + str(points == 58))
 
     b.print_board() if print_board else None
     word = "NGLISH"
@@ -32,7 +32,7 @@ def test_case(print_board = False):
         play.append(LetterTile(l, x, y))
         y += 1
     points = (b.play_word(play))
-    print("ENGLISH Vertical starting at Center " + str(points) + " is " + str(points == 12))
+    print("ENGLISH Vertical starting at Center " + "returns " +str(points) + " which is " + str(points == 12))
     b.print_board() if print_board else None
 
     word = "DOMI"
@@ -45,7 +45,7 @@ def test_case(print_board = False):
     y += 1
     play.append(LetterTile("O", x, y))
     points = (b.play_word(play))
-    print("DOMINO Vertical starting at (8, 3)  and NO at (7, 8) " + str(points) + " is " + str(points == 14))
+    print("DOMINO Vertical starting at (8, 3)  and NO at (7, 8) " + "returns " +str(points) + " which is " + str(points == 14))
     b.print_board() if print_board else None
 
     word = "ON"
@@ -57,7 +57,7 @@ def test_case(print_board = False):
         x += 1
     points = (b.play_word(play))
 
-    print("ON Horizontal starting at (13, 8) " + str(points) + " is " + str(points == 4))
+    print("ON Horizontal starting at (13, 8) " + "returns " +str(points) + " which is " + str(points == 4))
     b.print_board() if print_board else None
 
     word = "RUNNING"
@@ -68,7 +68,7 @@ def test_case(print_board = False):
         play.append(LetterTile(l, x, y))
         x += 1
     points = b.play_word(play)
-    print("RUNNINGS Horizontal starting at (0, 12) " + str(points) + " is " + str(points == 72))
+    print("RUNNINGS Horizontal starting at (0, 12) " + "returns " +str(points) + " which is " + str(points == 72))
     b.print_board() if print_board else None
 
     word = "GRANDIO"
@@ -79,7 +79,7 @@ def test_case(print_board = False):
         play.append(LetterTile(l, x, y))
         y += 1
     points = b.play_word(play)
-    print("GRANDIOSO Vertical starting at (13, 0) " + str(points) + " is " + str(points == 76))
+    print("GRANDIOSO Vertical starting at (13, 0) " + "returns " +str(points) + " which is " + str(points == 76))
     b.print_board() if print_board else None
 
     word = "RENT"
@@ -90,7 +90,7 @@ def test_case(print_board = False):
         play.append(LetterTile(l, x, y))
         y += 1
     points = b.play_word(play)
-    print("RENT Vertical starting at (0, 0) " + str(points) + " is " + str(True if points == -1 else False))
+    print("RENT Vertical starting at (0, 0) " + "returns " +str(points) + " which is " + str(True if points == -1 else False))
     b.print_board() if print_board else None
 
     word = "RENT"
@@ -101,7 +101,7 @@ def test_case(print_board = False):
         play.append(LetterTile(l, x, y))
         x += 1
     points = b.play_word(play)
-    print("ROLL Vertical starting at (3, 0) " + str(points) + " is " + str(True if points == -1 else False))
+    print("ROLL Vertical starting at (3, 0) " + "returns " +str(points) + " which is " + str(True if points == -1 else False))
     b.print_board() if print_board else None
 
     word = "BENT"
@@ -112,7 +112,7 @@ def test_case(print_board = False):
         play.append(LetterTile(l, x, y))
         y += 1
     points = b.play_word(play)
-    print("BENT Vertical starting at (14, 10) " + str(points) + " is " + str(True if points == -1 else False))
+    print("BENT Vertical starting at (14, 10) " + "returns " +str(points) + " which is " + str(True if points == -1 else False))
     b.print_board() if print_board else None
 
     word = "SENT"
@@ -123,7 +123,7 @@ def test_case(print_board = False):
         play.append(LetterTile(l, x, y))
         x += 1
     points = b.play_word(play)
-    print("SENT Vertical starting at (14, 10) " + str(points) + " is " + str(True if points == -1 else False))
+    print("SENT Vertical starting at (14, 10) " + "returns " +str(points) + " which is " + str(True if points == -1 else False))
     b.print_board() if print_board else None
 
     word = "A"
@@ -134,7 +134,7 @@ def test_case(print_board = False):
         play.append(LetterTile(l, x, y))
         x += 1
     points = b.play_word(play)
-    print("AA Horizontal starting at (14, 2) " + str(points) + " is " + str(points == 2))
+    print("AA Horizontal starting at (14, 2) " + "returns " +str(points) + " which is " + str(points == 2))
     b.print_board() if print_board else None
 
     word = "N"
@@ -144,42 +144,42 @@ def test_case(print_board = False):
     for l in word:
         play.append(LetterTile(l, x, y))
     points = b.play_word(play)
-    print("IN Vertical starting at (11, 8) " + str(points) + " is " + str(points == 2))
+    print("IN Vertical starting at (11, 8) " + "returns " +str(points) + " which is " + str(points == 2))
     b.print_board() if print_board else None
 
     play = [LetterTile("M", 11, 3), LetterTile("E", 9, 3), LetterTile("O", 12, 3)]
     points = b.play_word(play)
-    print("DE - MON Horizontal starting at (8, 3) " + str(points) + " is " + str(True if points == -1 else False))
+    print("DE - MON Horizontal starting at (8, 3) " + "returns " +str(points) + " which is " + str(True if points == -1 else False))
     b.print_board() if print_board else None
 
     play = [LetterTile("O", 2, 11), LetterTile("B", 2, 8), LetterTile("O", 2, 9)]
     points = b.play_word(play)
-    print("BO - ON Vertical starting at (2, 8) " + str(points) + " is " + str(True if points == -1 else False))
+    print("BO - ON Vertical starting at (2, 8) " + "returns " +str(points) + " which is " + str(True if points == -1 else False))
     b.print_board() if print_board else None
 
     play = [LetterTile("J", 0, 10), LetterTile("A", 0, 11)]
     points = b.play_word(play)
-    print("JA - R Vertical starting at (0, 10) " + str(points) + " is " + str(points == 11))
+    print("JA - R Vertical starting at (0, 10) " + "returns " +str(points) + " which is " + str(points == 11))
     b.print_board() if print_board else None
 
     play = [LetterTile("A", 2, 11), LetterTile("J", 2, 10), LetterTile("K", 2, 13)]
     points = b.play_word(play)
-    print("JA - N - K Vertical starting at (2, 10) " + str(points) + " is " + str(True if points == -1 else False))
+    print("JA - N - K Vertical starting at (2, 10) " + "returns " +str(points) + " which is " + str(True if points == -1 else False))
     b.print_board() if print_board else None
 
     play = [LetterTile("O", 12, 1), LetterTile("O", 9, 3)]
     points = b.play_word(play)
-    print("O - O Vertical starting at (12, 1) " + str(points) + " is " + str(True if points == -1 else False))
+    print("O - O Vertical starting at (12, 1) " + "returns " +str(points) + " which is " + str(True if points == -1 else False))
     b.print_board() if print_board else None
 
     play = [LetterTile("O", 9, 3), LetterTile("O", 12, 1)]
     points = b.play_word(play)
-    print("DO and OR Non-continous " + str(points) + " is " + str(True if points == -1 else False))
+    print("DO and OR Non-continous " + "returns " +str(points) + " which is " + str(True if points == -1 else False))
     b.print_board() if print_board else None
 
     play = [LetterTile("N", 8, 11), LetterTile("N", 9, 11)]
     points = b.play_word(play)
-    print("INN Horizontal Starting at (7, 11) " + str(points) + " is " + str(points == 3))
+    print("INN Horizontal Starting at (7, 11) " + "returns " +str(points) + " which is " + str(points == 3))
     b.print_board() if print_board else None
 
 test_case(print_board=False)

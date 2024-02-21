@@ -102,7 +102,17 @@ class Board:
         self.dictionary = Dictionary("dictionary.txt")
     def set_letterTile(self, LetterTile):
         self.board[LetterTile.get_y()][LetterTile.get_x()].set_letterTile(LetterTile)
-    def check_valid_play(self, play):
+    def get_direction(self, play):
+        direction = ""
+        if len(play) == 1:
+            direction = "neutral"
+        else:
+            if (play[0].get_x() - play[1].get_x()) != 0:
+                direction = "horizontal"
+            elif (play[0].get_y() - play[1].get_y()) != 0:
+                direction = "vertical"
+        return direction
+    def check_valid_play(self, play, print_resulting_words = False):
         """
         checks if play is valid or not given the state of the board. play is a list of LetterTile objects. Returns True or False
         """
@@ -116,14 +126,7 @@ class Board:
             print("NOT IN RANGE")
             return False
 
-        direction = ""
-        if len(play) == 1:
-            direction = "neutral"
-        else:
-            if (play[0].get_x() - play[1].get_x()) != 0:
-                direction = "horizontal"
-            elif (play[0].get_y() - play[1].get_y()) != 0:
-                direction = "vertical"
+        direction = self.get_direction(play)
 
         # verify that word is connected to other word
         is_connected = False
@@ -316,7 +319,8 @@ class Board:
                     break
             if len(word) != 1:
                 words.append(word)
-        print(words)
+        if print_resulting_words:
+            print(words)
         for word in words:
             if self.dictionary.check_word(word) == False:
                 return False
@@ -327,15 +331,7 @@ class Board:
         """
         Calculates score from a valid play. Returns score as an integer if valid or -1 if not
         """
-        direction = ""
-        if len(play) == 1:
-            direction = "neutral"
-        else:
-            if (play[0].get_x() - play[1].get_x()) != 0:
-                direction = "horizontal"
-            elif (play[0].get_y() - play[1].get_y()) != 0:
-                direction = "vertical"
-
+        direction = self.get_direction(play)
         points = 0
         if direction == "horizontal":
             p = play[0]
