@@ -143,7 +143,6 @@ class Board:
         
         if direction == "horizontal" or direction == "neutral":
             if play[0].get_x() != 0:
-                print(play[0].get_x())
                 if self.board[play[0].get_y()][play[0].get_x() - 1].get_letterTile() != None:
                     is_connected = True
             if play[-1].get_x() != MAX_XINDEX:
@@ -311,7 +310,6 @@ class Board:
             count += 1
             word = ""
             while (self.board[p.get_y()][count].get_letterTile() != None):
-                print(self.board[p.get_y()][count].get_letter())
                 word += self.board[p.get_y()][count].get_letter()
                 count += 1
                 if count == MAX_XRANGE:
@@ -353,19 +351,19 @@ class Board:
             while (self.board[p.get_y()][count].get_letterTile() != None):
                 if self.board[p.get_y()][count].get_letterTile().get_put_on_round() == self.round:
                     if self.board[p.get_y()][count].get_type() == DL:
-                        points += 2 * self.board[p.get_y()][count].get_letterTile().get_points()
+                        points += (2 * self.board[p.get_y()][count].get_letterTile().get_points())
                     elif self.board[p.get_y()][count].get_type() == TL:
-                        points += 3 * self.board[p.get_y()][count].get_letterTile().get_points()
+                        points += (3 * self.board[p.get_y()][count].get_letterTile().get_points())
                     elif self.board[p.get_y()][count].get_type() == DW:
-                        points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                        points += ( self.board[p.get_y()][count].get_letterTile().get_points())
                         multiplier *= 2
                     elif self.board[p.get_y()][count].get_type() == TW:
-                        points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                        points += ( self.board[p.get_y()][count].get_letterTile().get_points())
                         multiplier *= 3
                     elif self.board[p.get_y()][count].get_type() == RT or self.board[p.get_y()][count].get_type() == CT:
-                        points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                        points += ( self.board[p.get_y()][count].get_letterTile().get_points())
                 else:
-                    points +=  self.board[p.get_y()][count].get_letterTile().get_points()
+                    points += ( self.board[p.get_y()][count].get_letterTile().get_points())
                 count += 1
                 if count == MAX_XRANGE:
                     break
@@ -419,7 +417,7 @@ class Board:
             multiplier = 1
             while (self.board[count][p.get_x()].get_letterTile() != None):
                 if self.board[count][p.get_x()].get_letterTile().get_put_on_round() == self.round:
-
+                    
                     if self.board[count][p.get_x()].get_type() == DL:
                         points += (2 * self.board[count][p.get_x()].get_letterTile().get_points())
                     elif self.board[count][p.get_x()].get_type() == TL:
@@ -580,166 +578,7 @@ class Board:
             print("")
         print("")
 
-# put into separate file "test_cases.py" later   
-def test_case():
-    word = "ENTAILS"
-    x  = 7
-    y = 7
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        x += 1
-    b = Board()
-    print("ENTAILS Horizontal starting at Center " + str(b.play_word(play)))
-    b.print_board()
-    word = "NGLISH"
-    x  = 7
-    y = 8
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        y += 1
-    print("ENGLISH Vertical starting at Center " + str(b.play_word(play)))
-    b.print_board()
 
-    word = "DOMI"
-    x  = 8
-    y = 3
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        y += 1
-    y += 1
-    play.append(LetterTile("O", x, y))
-
-    print("DOMINO Vertical starting at (8, 3) " + str(b.play_word(play)))
-    b.print_board()
-
-    word = "ON"
-    x  = 13
-    y = 8
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        x += 1
-    print("ON Horizontal starting at (13, 8) " + str(b.play_word(play)))
-    b.print_board()
-
-    word = "RUNNING"
-    x  = 0
-    y = 12
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        x += 1
-    print("RUNNINGS Horizontal starting at (0, 12) " + str(b.play_word(play)))
-    b.print_board()
-
-    word = "GRANDIO"
-    x  = 13
-    y = 0
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        y += 1
-    print("GRANDIOSO Vertical starting at (13, 0) " + str(b.play_word(play)))
-    b.print_board()
-
-    word = "RENT"
-    x  = 0
-    y = 0
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        y += 1
-    print("RENT Vertical starting at (0, 0) " + str(b.play_word(play)))
-    b.print_board()
-
-    word = "RENT"
-    x  = 3
-    y = 0
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        x += 1
-    print("ROLL Vertical starting at (3, 0) " + str(b.play_word(play)))
-    b.print_board()
-
-    word = "BENT"
-    x  = 14
-    y = 10
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        y += 1
-    print("BENT Vertical starting at (14, 10) " + str(b.play_word(play)))
-    b.print_board()
-
-    word = "SENT"
-    x  = 9
-    y = 14
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        x += 1
-    print("SENT Vertical starting at (14, 10) " + str(b.play_word(play)))
-    b.print_board()
-
-    word = "BENT"
-    x  = 14
-    y = 10
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        y += 1
-    print("BENT Vertical starting at (14, 10) " + str(b.play_word(play)))
-    b.print_board()
-
-    word = "A"
-    x  = 14
-    y = 2
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-        x += 1
-    print("AA Horizontal starting at (14, 2) " + str(b.play_word(play)))
-    b.print_board()
-
-    word = "N"
-    x  = 11
-    y = 8
-    play = []
-    for l in word:
-        play.append(LetterTile(l, x, y))
-    print("IN Vertical starting at (11, 8) " + str(b.play_word(play)))
-    b.print_board()
-
-    play = [LetterTile("E", 9, 3), LetterTile("M", 11, 3), LetterTile("O", 12, 3)]
-
-    print("DE - MON Horizontal starting at (8, 3) " + str(b.play_word(play)))
-    b.print_board()
-
-    play = [LetterTile("O", 2, 11), LetterTile("O", 2, 9), LetterTile("B", 2, 8)]
-
-    print("BO - ON Vertical starting at (2, 8) " + str(b.play_word(play)))
-    b.print_board()
-
-    play = [LetterTile("J", 0, 10), LetterTile("A", 0, 11)]
-
-    print("JA - R Vertical starting at (0, 10) " + str(b.play_word(play)))
-    b.print_board()
-
-    play = [LetterTile("J", 2, 10), LetterTile("A", 2, 11), LetterTile("K", 2, 13)]
-
-    print("JA - N - K Vertical starting at (2, 10) " + str(b.play_word(play)))
-    b.print_board()
-
-    play = [LetterTile("O", 12, 1), LetterTile("O", 9, 3)]
-    print("O - O Vertical starting at (12, 1) " + str(b.play_word(play)))
-    b.print_board()
-
-
-test_case()
 def MainLoop():
     d = Dictionary("dictionary.txt")
     print("LOOP")
