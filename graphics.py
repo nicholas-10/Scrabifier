@@ -52,7 +52,7 @@ board_colors = {
     "TW": "orange"
 }
 
-ori_hand = ["Z", "Q", "J", "Y", "Q", "K", "Z"]
+ori_hand = ["A", "T", "S", "R", "E", "E", "D"]
 hand = ori_hand.copy()
 
 class DragTileManager():
