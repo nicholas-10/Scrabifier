@@ -32,3 +32,16 @@ MAX_YINDEX = 14
 
 MIN_XRANGE = 0
 MIN_YRANGE = 0
+
+TILE_SIZE = 30
+SQUARE_SIZE = 35
+
+BOARD_TILES = ["CT", "RT", "DL", "TL", "DW", "TW"]
+BOARD_COLORS = {
+    "CT": "deeppink1",
+    "RT": "beige",
+    "DL": "cyan",
+    "TL": "deepskyblue2",
+    "DW": "darkorchid1",
+    "TW": "orange"
+}

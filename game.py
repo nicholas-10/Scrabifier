@@ -1,6 +1,8 @@
 import util
 import random
 from constants import *
+from graphics import *
+
 class Dictionary:
     """
     Dictionary object for game
@@ -24,6 +26,8 @@ class BoardTile:
         self.letterTile = None
     def set_letterTile(self, letterTile):
         self.letterTile = letterTile
+    def set_letterTile_split(self, letter, col, row):
+        self.letterTile = LetterTile(letter, col, row)
     def get_letterTile(self):
         return self.letterTile
     def get_letter(self):
@@ -573,10 +577,8 @@ class Board:
                     print(t.get_letter() + " ", end="")
             print("")
         print("")
-
+        open_window(self)
 
 def MainLoop():
     d = Dictionary("dictionary.txt")
     print("LOOP")
-
-

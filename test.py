@@ -183,3 +183,42 @@ def test_case(print_board = False):
     b.print_board() if print_board else None
 
 test_case(print_board=False)
+
+def test_case_2(print_board = False):
+    word = "ENTAILS"
+    x  = 7
+    y = 7
+    play = []
+    for l in word:
+        play.append(LetterTile(l, x, y))
+        x += 1
+    b = Board()
+    points = (b.play_word(play))
+    print("ENTAILS Horizontal starting at Center " +  "returns " +str(points) + " which is " + str(points == 58))
+
+    b.print_board() if print_board else None
+    word = "NGLISH"
+    x  = 7
+    y = 8
+    play = []
+    for l in word:
+        play.append(LetterTile(l, x, y))
+        y += 1
+    points = (b.play_word(play))
+    print("ENGLISH Vertical starting at Center " + "returns " +str(points) + " which is " + str(points == 12))
+    b.print_board() if print_board else None
+
+    word = "DOMI"
+    x  = 8
+    y = 3
+    play = []
+    for l in word:
+        play.append(LetterTile(l, x, y))
+        y += 1
+    y += 1
+    play.append(LetterTile("O", x, y))
+    points = (b.play_word(play))
+    print("DOMINO Vertical starting at (8, 3)  and NO at (7, 8) " + "returns " +str(points) + " which is " + str(points == 14))
+    b.print_board() if print_board else None
+
+test_case_2(print_board=True)
