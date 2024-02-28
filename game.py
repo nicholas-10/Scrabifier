@@ -1,7 +1,7 @@
 import util
 import random
 from constants import *
-from graphics import *
+from graphics import open_window
 
 class Dictionary:
     """
@@ -84,6 +84,7 @@ class Bag:
 
 class Board:
     def __init__(self):
+        self.play = []
         self.board = [
             [BoardTile(TW), BoardTile(RT), BoardTile(RT), BoardTile(DL), BoardTile(RT), BoardTile(RT), BoardTile(RT), BoardTile(TW), BoardTile(RT), BoardTile(RT), BoardTile(RT), BoardTile(DL), BoardTile(RT), BoardTile(RT), BoardTile(TW)],
             [BoardTile(RT), BoardTile(DW), BoardTile(RT), BoardTile(RT), BoardTile(RT), BoardTile(TL), BoardTile(RT), BoardTile(RT), BoardTile(RT), BoardTile(TL), BoardTile(RT), BoardTile(RT), BoardTile(RT), BoardTile(DW), BoardTile(RT)],
@@ -104,6 +105,21 @@ class Board:
         self.playerToMove = 1
         self.round = 1
         self.dictionary = Dictionary("dictionary.txt")
+    def get_play(self):
+        return self.play
+    def check_play(self):
+        return len(self.play) != 0
+    def add_play(self, letter, x, y):
+        self.play.append(LetterTile(letter, x, y))
+        for tile in self.play:
+            print(tile.get_letter(), tile.get_x(), tile.get_y())
+    def remove_play(self, letter, x, y):
+        for tile in self.play:
+            if(tile.get_letter() == letter and tile.get_x() == x and tile.get_y() == y):
+                self.play.remove(tile)
+                for tile in self.play:
+                    print(tile.get_letter(), tile.get_x(), tile.get_y())
+                return
     def set_letterTile(self, LetterTile):
         self.board[LetterTile.get_y()][LetterTile.get_x()].set_letterTile(LetterTile)
     def get_direction(self, play):
@@ -565,6 +581,7 @@ class Board:
         else:
             pts = -1
         self.round += 1
+        self.play.clear()
         return pts
     def print_board(self):
         print("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4")
