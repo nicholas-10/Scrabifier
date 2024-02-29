@@ -90,7 +90,7 @@ class DragTileManager():
                         self.board[grid_row][grid_col].set_letterTile(None)
             event.widget.place_configure(x=snap_x, y=snap_y)
             self.tile = None
-
+            
 def shuffle_hand(w, b):
     global hand, ori_hand
     random.shuffle(ori_hand)
@@ -105,7 +105,21 @@ def submit(w, b):
         if(points != -1):
             player_score += points
         w.destroy()
+        print("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4")
+        for i, row in enumerate(b.board):
+            print(str(i % 10) + " ", end="")
+            for t in row:
+                if t.get_letterTile() == None:
+                    print("- ", end="")
+                else:
+                    print(t.get_letter() + " ", end="")
+            print("")
+        print("")
         open_window(b)
+
+def submit_board(w, b, board):
+    submit(w, b)
+    board[:] = copy.deepcopy(b.board)
 
 def open_window(b):
     global board_frame, bar_frame, hand, ori_hand
@@ -137,7 +151,7 @@ def open_window(b):
     style.configure("Bar.TButton", font=("Ubuntu", 10))
     shuffle_btn = ttk.Button(btn_frame, text = "Shuffle", style="Bar.TButton", command=lambda: shuffle_hand(window, b))
     exchange_btn = ttk.Button(btn_frame, text = "Exchange", style="Bar.TButton")
-    submit_btn = ttk.Button(btn_frame, text = "Submit", style="Bar.TButton", command=lambda: submit(window, b))
+    submit_btn = ttk.Button(btn_frame, text = "Submit", style="Bar.TButton", command=lambda: submit_board(window, b, board))
     quit_btn = ttk.Button(btn_frame, text = "Quit", style="Bar.TButton")
 
     shuffle_btn.grid(row = 0, column = 0)
