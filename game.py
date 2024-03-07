@@ -36,11 +36,14 @@ class BoardTile:
     def get_type(self):
         return self.type
 class LetterTile:
-    def __init__(self, letter, x = -1, y = -1):
+    def __init__(self, letter, x = -1, y = -1, is_blank = False):
         self.letter = letter
         self.x = x
         self.y = y
-        self.point = SCRABBLE_LETTER_POINTS[letter]
+        if is_blank == False:
+            self.point = SCRABBLE_LETTER_POINTS[letter]
+        else:
+            self.point = 0
         self.put_on_round = -1
     def set_x(self, x):
         self.x = x
@@ -612,6 +615,7 @@ class Board:
         print("Player to move: " + str(self.playerToMove))
         print("Hand: " + str(self.players[self.playerToMove].get_hand()))
         # open_window(self)
+        
     def get_input(self):
         print("Place Play, type 'done' to play: (Use all Caps)")
         play = []
@@ -619,9 +623,11 @@ class Board:
             letter = input("Letter: ")
             if letter == "done":
                 break
+            if letter == "?":
+                letter = input("Letter of choice: ")
             x = int(input("x: "))
             y = int(input("y: "))
-            play.append(LetterTile(letter, x, y))
+            play.append(LetterTile(letter, x, y, True))
 
         return play
     
