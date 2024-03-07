@@ -100,22 +100,23 @@ def shuffle_hand(w, b):
 
 def submit(w, b):
     global player_score
-    if(b.check_play()):
-        points = (b.play_word(b.get_play()))
-        if(points != -1):
-            player_score += points
-        w.destroy()
-        print("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4")
-        for i, row in enumerate(b.board):
-            print(str(i % 10) + " ", end="")
-            for t in row:
-                if t.get_letterTile() == None:
-                    print("- ", end="")
-                else:
-                    print(t.get_letter() + " ", end="")
-            print("")
-        print("")
-        open_window(b)
+    # if(b.check_play()):
+    #     points = (b.play_word(b.get_play()))
+    #     if(points != -1):
+    #         player_score += points
+    w.destroy()
+        # print("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4")
+        # for i, row in enumerate(b.board):
+            # print(str(i % 10) + " ", end="")
+            # for t in row:
+                # if t.get_letterTile() == None:
+                    # print("- ", end="")
+                # else:
+                    # print(t.get_letter() + " ", end="")
+            # print("")
+        # print("")
+    
+    open_window(b)
 
 def submit_board(w, b, board):
     submit(w, b)

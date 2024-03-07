@@ -2,6 +2,7 @@ import util
 import random
 from constants import *
 from graphics import open_window
+import agent
 
 class Dictionary:
     """
@@ -80,6 +81,7 @@ class Bag:
             sampled_words.append(sample)
             if self.bag[sample] == 0:
                 self.bag.pop(sample)
+                keys = list(self.bag.keys())
         return sampled_words
 
 class Board:
@@ -102,9 +104,15 @@ class Board:
             [BoardTile(RT), BoardTile(DW), BoardTile(RT), BoardTile(RT), BoardTile(RT), BoardTile(TL), BoardTile(RT), BoardTile(RT), BoardTile(RT), BoardTile(TL), BoardTile(RT), BoardTile(RT), BoardTile(RT), BoardTile(DW), BoardTile(RT)],
             [BoardTile(TW), BoardTile(RT), BoardTile(RT), BoardTile(DL), BoardTile(RT), BoardTile(RT), BoardTile(RT), BoardTile(TW), BoardTile(RT), BoardTile(RT), BoardTile(RT), BoardTile(DL), BoardTile(RT), BoardTile(RT), BoardTile(TW)]
             ]
-        self.playerToMove = 1
+        self.playerToMove = 0
         self.round = 1
         self.dictionary = Dictionary("dictionary.txt")
+        self.bag = Bag()
+        self.players = []
+        self.players.append(agent.Player(0, self.bag.get_n_tiles(7), self))
+        self.players.append(agent.Player(1, self.bag.get_n_tiles(7), self))
+    def get_bag(self):
+        return self.bag
     def get_play(self):
         return self.play
     def check_play(self):
@@ -569,21 +577,26 @@ class Board:
         """
         t = False
         t = self.check_valid_play(play)
-        
         # "retakes" letter tiles if the word is not valid
         if t == False:
             for p in play:
                 self.board[p.get_y()][ p.get_x()].set_letterTile(None)
-        self.playerToMove = 1 + ((1 + self.round) % 2)
+            return -1
         pts = 0
         if t == True:
             pts =  (self.calculate_points(play))
-        else:
-            pts = -1
-        self.round += 1
+            if pts == -1:
+                return -1
+
+            playerMoved = self.players[self.playerToMove]
+            playerMoved.set_score(playerMoved.get_score() + pts)
+            playerMoved.board.get_bag().get_n_tiles(len(play))
+            self.playerToMove = ((self.round) % 2)
+            self.round += 1
         self.play.clear()
         return pts
     def print_board(self):
+        print("Player to Move: " + str(self.playerToMove))
         print("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4")
         for i, row in enumerate(self.board):
             print(str(i % 10) + " ", end="")
@@ -594,8 +607,25 @@ class Board:
                     print(t.get_letter() + " ", end="")
             print("")
         print("")
-        open_window(self)
+        print("PLayer 0: " + str(self.players[0].get_score()))
+        print("PLayer 1: " + str(self.players[1].get_score()))
+        print("Player to move: " + str(self.playerToMove))
+        print("Hand: " + str(self.players[self.playerToMove].get_hand()))
+        # open_window(self)
+    def get_input(self):
+        print("Place Play, type 'done' to play: (Use all Caps)")
+        play = []
+        while True:
+            letter = input("Letter: ")
+            if letter == "done":
+                break
+            x = int(input("x: "))
+            y = int(input("y: "))
+            play.append(LetterTile(letter, x, y))
+
+        return play
+    
+    
 
 def MainLoop():
-    d = Dictionary("dictionary.txt")
     print("LOOP")
