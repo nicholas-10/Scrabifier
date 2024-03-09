@@ -1,5 +1,0 @@
-Unify logic and GUI
-Game flow
-2 players
-Hand representation
-Blank representation
