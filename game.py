@@ -81,7 +81,7 @@ class Bag:
             sample = random.choice(keys)
             self.bag[sample] -= 1
             self.remainingTiles -= 1
-            sampled_words.append(sample)
+            sampled_words.append(LetterTile(sample))
             if self.bag[sample] == 0:
                 self.bag.pop(sample)
                 keys = list(self.bag.keys())
@@ -593,7 +593,20 @@ class Board:
 
             playerMoved = self.players[self.playerToMove]
             playerMoved.set_score(playerMoved.get_score() + pts)
-            playerMoved.board.get_bag().get_n_tiles(len(play))
+            hand = playerMoved.get_hand()
+            for p in play:
+                index = -1
+                count = 0
+                for h in hand:
+                    if p.get_letter() == h.get_letter():
+                        index = count
+                        break
+                    count += 1
+                hand.pop(index)
+
+            for l in playerMoved.board.get_bag().get_n_tiles(len(play)):
+                hand.append(l)
+            playerMoved.set_hand(hand)
             self.playerToMove = ((self.round) % 2)
             self.round += 1
         self.play.clear()
@@ -613,21 +626,26 @@ class Board:
         print("PLayer 0: " + str(self.players[0].get_score()))
         print("PLayer 1: " + str(self.players[1].get_score()))
         print("Player to move: " + str(self.playerToMove))
-        print("Hand: " + str(self.players[self.playerToMove].get_hand()))
+        print("Hand: " + str(self.players[self.playerToMove].print_hand()))
         # open_window(self)
         
     def get_input(self):
         print("Place Play, type 'done' to play: (Use all Caps)")
         play = []
         while True:
+            isBlank = False
             letter = input("Letter: ")
             if letter == "done":
                 break
             if letter == "?":
                 letter = input("Letter of choice: ")
+        
+        
+                isBlank = True
             x = int(input("x: "))
             y = int(input("y: "))
-            play.append(LetterTile(letter, x, y, True))
+            play.append(LetterTile(letter, x, y, isBlank))
+
 
         return play
     

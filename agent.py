@@ -12,3 +12,9 @@ class Player:
         return self.hand
     def set_hand(self, hand):
         self.hand = hand
+    def print_hand(self):
+        print("(", end = "")
+        for h in self.hand:
+            print(h.get_letter(), end = "")
+            print(", ", end = "")
+        print(")")
