@@ -114,6 +114,10 @@ class Board:
         self.players = []
         self.players.append(agent.Player(0, self.bag.get_n_tiles(7), self))
         self.players.append(agent.Player(1, self.bag.get_n_tiles(7), self))
+    def get_players(self):
+        return self.players
+    def get_playerToMove(self):
+        return self.playerToMove
     def get_bag(self):
         return self.bag
     def get_play(self):
@@ -170,7 +174,7 @@ class Board:
             if not is_on_center:
                 return False
             elif is_on_center:
-                is_connected = True        
+                is_connected = True  
         if play[0].get_y() != 0:
             if self.board[play[0].get_y() - 1][play[0].get_x()].get_letterTile() != None:
                 is_connected = True
@@ -580,6 +584,7 @@ class Board:
         """
         t = False
         t = self.check_valid_play(play)
+        print(f"Play is {t}")
         # "retakes" letter tiles if the word is not valid
         if t == False:
             for p in play:
@@ -607,8 +612,8 @@ class Board:
             for l in playerMoved.board.get_bag().get_n_tiles(len(play)):
                 hand.append(l)
             playerMoved.set_hand(hand)
-            self.playerToMove = ((self.round) % 2)
             self.round += 1
+            self.playerToMove = (self.round + 1) % 2
         self.play.clear()
         return pts
     def print_board(self):
@@ -623,11 +628,13 @@ class Board:
                     print(t.get_letter() + " ", end="")
             print("")
         print("")
-        print("PLayer 0: " + str(self.players[0].get_score()))
-        print("PLayer 1: " + str(self.players[1].get_score()))
-        print("Player to move: " + str(self.playerToMove))
-        print("Hand: " + str(self.players[self.playerToMove].print_hand()))
-        # open_window(self)
+        print("Player 1: " + str(self.players[0].get_score()))
+        print("Player 2: " + str(self.players[1].get_score()))
+        print("Player to move: " + str(self.playerToMove + 1))
+        print("Hand: ", end="")
+        self.players[self.playerToMove].print_hand()
+        print("Round: " + str(self.round))
+        open_window(self)
         
     def get_input(self):
         print("Place Play, type 'done' to play: (Use all Caps)")
