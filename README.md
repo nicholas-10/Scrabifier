@@ -1,2 +1,2 @@
 # Scrabified
-Decent Scrabble AI (hopefully)
+Scrabble game
