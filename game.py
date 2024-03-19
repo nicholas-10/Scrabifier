@@ -122,6 +122,8 @@ class Board:
         return self.bag
     def get_play(self):
         return self.play
+    def clear_play(self):
+        self.play = []
     def check_play(self):
         return len(self.play) != 0
     def add_play(self, letter, x, y):

@@ -117,7 +117,10 @@ def submit(w, b):
             print("")
         print("")
         
+        b.clear_play()
         b.print_board()
+    else:
+        b.clear_play()
 
 def submit_board(w, b, board):
     submit(w, b)
