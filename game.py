@@ -41,7 +41,10 @@ class LetterTile:
         self.x = x
         self.y = y
         if is_blank == False:
-            self.point = SCRABBLE_LETTER_POINTS[letter]
+            if(letter.islower()):
+                self.point = 0
+            else:
+                self.point = SCRABBLE_LETTER_POINTS[letter]
         else:
             self.point = 0
         self.put_on_round = -1
@@ -53,6 +56,10 @@ class LetterTile:
         return self.x
     def get_y(self):
         return self.y
+    def set_letter(self, letter):
+        self.letter = letter
+    def reset_letter(self):
+        self.letter = "?"
     def get_letter(self):
         return self.letter
     def get_points(self):
@@ -130,9 +137,9 @@ class Board:
         self.play.append(LetterTile(letter, x, y))
         for tile in self.play:
             print(tile.get_letter(), tile.get_x(), tile.get_y())
-    def remove_play(self, letter, x, y):
+    def remove_play(self, x, y):
         for tile in self.play:
-            if(tile.get_letter() == letter and tile.get_x() == x and tile.get_y() == y):
+            if(tile.get_x() == x and tile.get_y() == y):
                 self.play.remove(tile)
                 for tile in self.play:
                     print(tile.get_letter(), tile.get_x(), tile.get_y())
