@@ -171,7 +171,7 @@ class Board:
             return False
 
         direction = self.get_direction(play)
-
+        print(direction)
         # verify that word is connected to other word
         is_connected = False
         if self.round == 1:
@@ -187,7 +187,10 @@ class Board:
         if play[0].get_y() != 0:
             if self.board[play[0].get_y() - 1][play[0].get_x()].get_letterTile() != None:
                 is_connected = True
-        
+        def compare_x_pos(tile):
+            return tile.get_x()
+        def compare_y_pos(tile):
+            return tile.get_y()
         if direction == "horizontal" or direction == "neutral":
             if play[0].get_x() != 0:
                 if self.board[play[0].get_y()][play[0].get_x() - 1].get_letterTile() != None:
@@ -202,6 +205,19 @@ class Board:
                 if play[i].get_y() != 0:
                     if self.board[play[i].get_y() - 1][play[i].get_x()].get_letterTile() != None:
                         is_connected = True
+            # if more bugs, its likely this
+            play = sorted(play, key = compare_x_pos)
+            short = play[0].get_x()
+            long = play[-1].get_x() 
+            c = False
+            for i in range(short, long + 1):
+                if self.board[play[0].get_y()][i].get_letterTile() == None:
+
+                    break
+                if i == long:
+                    c = True
+            if c == True:
+                is_connected = True
         elif direction == "vertical":
             if play[0].get_y() != 0:
                 if self.board[play[0].get_y() - 1][play[0].get_x()].get_letterTile() != None:
@@ -216,6 +232,20 @@ class Board:
                 if play[i].get_x() != 0:
                     if self.board[play[i].get_y()][play[i].get_x() - 1].get_letterTile() != None:
                         is_connected = True
+                        # if more bugs, its likely this
+            play = sorted(play, key = compare_y_pos)
+            short = play[0].get_y()
+            long = play[-1].get_y() 
+            c = False
+            for i in range(short, long + 1):
+                if self.board[i][play[0].get_x()].get_letterTile() == None:
+
+                    break
+                if i == long:
+                    c = True
+            if c == True:
+                is_connected = True
+
         if is_connected == False:
             return False
         if direction == "horizontal":
@@ -275,6 +305,7 @@ class Board:
                 
 
         elif direction == "vertical":
+            print("FAFA")
             count = p.get_y()
             while (self.board[count][p.get_x()].get_letterTile() != None):
                 count -= 1
@@ -291,7 +322,7 @@ class Board:
                     break
             if (len(word) != 1):
                 words.append(word)
-
+            print("FAFAssss")
             for p in play:
                 count = p.get_x()
                 while (self.board[p.get_y()][count].get_letterTile() != None):
@@ -363,6 +394,7 @@ class Board:
                     break
             if len(word) != 1:
                 words.append(word)
+        print("THIRD")
         if print_resulting_words:
             print(words)
         for word in words:
