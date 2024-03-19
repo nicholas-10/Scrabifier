@@ -210,11 +210,14 @@ class Board:
             short = play[0].get_x()
             long = play[-1].get_x() 
             c = False
+            a_tile_not_this_round = False
             for i in range(short, long + 1):
                 if self.board[play[0].get_y()][i].get_letterTile() == None:
 
                     break
-                if i == long:
+                if self.board[play[0].get_y()][i].get_letterTile().get_put_on_round() != self.round:
+                    a_tile_not_this_round = True
+                if i == long and a_tile_not_this_round == True:
                     c = True
             if c == True:
                 is_connected = True
@@ -237,11 +240,14 @@ class Board:
             short = play[0].get_y()
             long = play[-1].get_y() 
             c = False
+            a_tile_not_this_round = False
             for i in range(short, long + 1):
                 if self.board[i][play[0].get_x()].get_letterTile() == None:
 
                     break
-                if i == long:
+                if self.board[i][play[0].get_x()].get_letterTile().get_put_on_round() != self.round:
+                    a_tile_not_this_round = True
+                if i == long and a_tile_not_this_round == True:
                     c = True
             if c == True:
                 is_connected = True

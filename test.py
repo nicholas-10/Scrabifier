@@ -182,13 +182,13 @@ def test_case(print_board = False):
     print("INN Horizontal Starting at (7, 11) " + "returns " +str(points) + " which is " + str(points == 3))
     b.print_board() if print_board else None
 
-# test_case(print_board=False)
+test_case(print_board=False)
 
 def test_case_2():
     b = Board()
     b.print_board()
 
-test_case_2()
+# test_case_2()
 
 def test_player():
     pass
