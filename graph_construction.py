@@ -54,6 +54,91 @@ print(newlist)
 for i in strings:
     CheckInclude(i)
 
+import game as g
+import test as t
+
+wordChecker=g.Dictionary("dictionary.txt")
+#Row/Column Checker
+
+
+# Flow:
+# We start by putting a play container so that its extendable to the right.
+# When the node is extendable to left,insert. Then check if node extendable to right, then extend. If node not extendable to right, then append to words, if the word is not extendable anymore.
+def ExtendRight(Square,Board,hand,Direction,allsuffixes,hands,words):
+    play=list() #insert contains all letters
+    if wordChecker.check_prefix(play.append("+")) and not play: #For all +
+            allsuffixes.append(play.append("+"))
+            hands.append(hand)
+    if (Square.get_letter()==None and not hand) :
+        return 
+    
+    if Direction=="Vertical" and Square.get_y()<15 and (Square.get_letter()==None and hand):  #If extendable from position
+        for i in hand:
+            i.set_x(Square.get_x())
+            i.set_y(Square.get_y())
+            if wordChecker.check_prefix(play+i.get_letter())==True and cross_check(i,"Vertical") :
+                ExtendRight(Board[Square.get_x()][Square.get_y()+1],Board,hand.remove(i),play.insert(0,i),Direction)
+                hand.append(i)
+                play.remove(i)
+            else: #If extendable in theory but not possible at hand, and not +
+                if(wordChecker.check_word(play)): #No +
+                    words.append(play)
+                    return
+    elif Square.get_letter()!=None and Direction=="Vertical":
+        ExtendRight(Board[Square.get_x()][Square.get_y()+1],Board,hand.remove(i),play.insert(0,i),Direction,allsuffixes,hands)
+    elif Square.get_letter()!=None and Direction=="Horizontal":
+        ExtendRight(Board[Square.get_x()+1][Square.get_y()],Board,hand.remove(i),play.insert(0,i),Direction,allsuffixes,hands)
+    if Direction=="Horizontal" and Square.get_x()<15 and (Square.get_letter()==None and hand):
+        for i in hand:
+            i.set_x(Square.get_x())
+            i.set_y(Square.get_y())
+            if wordChecker.check_prefix(play+i.get_letter())==True and cross_check(i,"Horizontal") :
+                ExtendRight(Board[Square.get_x()+i][Square.get_y()],Board,hand.remove(i),play.insert(0,i),Direction,allsuffixes,hands)
+                hand.append(i)
+                play.remove(i)
+                
+            else:
+                if(wordChecker.check_word(play)): #At this point there are no subtries left, so we append play, otherwise
+                    words.append(play)
+                    return
+    
+def cross_check(LetterTile,Direction,Board):
+    word=[LetterTile]
+    if Direction=="Horizontal":
+        j=0
+        while(LetterTile.get_y()<15):
+            
+            if Board[LetterTile.get_x()][LetterTile.get_y()+j].get_letter()==None:
+                 break
+            else:
+                 j=j+1
+            word.append(Board[LetterTile.get_x()][LetterTile.get_y()+j])
+        j=0
+        while(LetterTile.get_y()>0):
+            if Board[LetterTile.get_x()][LetterTile.get_y()-j].get_letter()==None:
+                break
+            else:
+                j=j+1
+            word.insert(0,Board[LetterTile.get_x()][LetterTile.get_y()-j])
+        return wordChecker.check_word(word)
+    if Direction=="Vertical":
+        j=0
+        while(LetterTile.get_y()<15):
+            
+            if Board[LetterTile.get_x()+j][LetterTile.get_y()].get_letter()==None:
+                 break
+            else:
+                 j=j+1
+            word.append(Board[LetterTile.get_x()+j][LetterTile.get_y()])
+        j=0
+        while(LetterTile.get_y()>0):
+            if Board[LetterTile.get_x()]-j[LetterTile.get_y()].get_letter()==None:
+                break
+            else:
+                j=j+1
+            word.insert(0,Board[LetterTile.get_x()-j][LetterTile.get_y()])
+        return wordChecker.check_word(word)
+
 
 
             

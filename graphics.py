@@ -1,19 +1,21 @@
 from tkinter import *
 from tkinter import ttk
 from constants import *
+from graphics_wild import open_wild_window
 import random
 import copy
 
 player_score = 0
 
-ori_hand = ["A", "T", "S", "R", "E", "E", "D"]
+ori_hand = []
 hand = ori_hand.copy()
 
 board_frame = None
 bar_frame = None
 
 class DragTileManager():
-    def __init__(self, frame, board, b):
+    def __init__(self, window, frame, board, b):
+        self.window = window
         self.board = board
         self.tile = None
         self.start_x = 0
@@ -49,6 +51,23 @@ class DragTileManager():
 
             event.widget.place_configure(x=x, y=y)
 
+    def set_wild_letter(self, event, letter, snap_x, snap_y, grid_col, grid_row):
+        print("SET LETTER TO", letter)
+        self.letters[event.widget].set_letter(letter)
+        print(f"Tile '{self.letters[event.widget].get_letter()}' placed at board:", grid_col, grid_row)
+        self.b.add_play(self.letters[event.widget].get_letter(), grid_col, grid_row)
+        self.board[grid_row][grid_col].set_letterTile_split(self.letters[event.widget].get_letter(), grid_col, grid_row)
+        grid_col, grid_row = self.ori_x // SQUARE_SIZE, self.ori_y // SQUARE_SIZE
+        if grid_row == 15:
+            print(f"Tile '{self.letters[event.widget].get_letter()}' gone from hand:", grid_col - 4)
+            hand[grid_col - 4] = "-"
+        else:
+            print(f"Tile '{self.letters[event.widget].get_letter()}' gone from board:", grid_col, grid_row)
+            self.b.remove_play(grid_col, grid_row)
+            self.board[grid_row][grid_col].set_letterTile(None)
+        event.widget.place_configure(x=snap_x, y=snap_y)
+        self.tile = None
+
     def on_drag_end(self, event):
         if self.tile:
             x, y = event.widget.winfo_x(), event.widget.winfo_y()
@@ -60,37 +79,47 @@ class DragTileManager():
                     grid_col, grid_row = self.ori_x // SQUARE_SIZE, self.ori_y // SQUARE_SIZE
                     snap_x, snap_y = min(max(grid_col * SQUARE_SIZE, 0), board_width - TILE_SIZE) + 2.5, (min(max(grid_row * SQUARE_SIZE, 0), board_height - TILE_SIZE) + 12.5) if self.ori_y // SQUARE_SIZE == 15 else min(max(grid_row * SQUARE_SIZE, 0), board_height - TILE_SIZE) + 2.5
                 else:
-                    print(f"Tile '{self.letters[event.widget]}' placed at hand:", grid_col - 4)
-                    hand[grid_col - 4] = self.letters[event.widget]
+                    if(self.letters[event.widget].get_points() == 0):
+                        self.letters[event.widget].reset_letter()
+                    print(f"Tile '{self.letters[event.widget].get_letter()}' placed at hand:", grid_col - 4)
+                    hand[grid_col - 4] = self.letters[event.widget].get_letter()
                     snap_x, snap_y = min(max(grid_col * SQUARE_SIZE, 0), board_width - TILE_SIZE) + 2.5, min(max(grid_row * SQUARE_SIZE, 0), board_height - TILE_SIZE) + 12.5
                     grid_col, grid_row = self.ori_x // SQUARE_SIZE, self.ori_y // SQUARE_SIZE
                     if grid_row == 15:
-                        print(f"Tile '{self.letters[event.widget]}' gone from hand:", grid_col - 4)
+                        print(f"Tile '{self.letters[event.widget].get_letter()}' gone from hand:", grid_col - 4)
                         hand[grid_col - 4] = "-"
                     else:
-                        print(f"Tile '{self.letters[event.widget]}' gone from board:", grid_col, grid_row)
-                        self.b.remove_play(self.letters[event.widget], grid_col, grid_row)
+                        print(f"Tile '{self.letters[event.widget].get_letter()}' gone from board:", grid_col, grid_row)
+                        self.b.remove_play(grid_col, grid_row)
                         self.board[grid_row][grid_col].set_letterTile(None)
+                event.widget.place_configure(x=snap_x, y=snap_y)
+                self.tile = None
             else:
                 if self.board[grid_row][grid_col].get_letterTile():
                     grid_col, grid_row = self.ori_x // SQUARE_SIZE, self.ori_y // SQUARE_SIZE
                     snap_x, snap_y = min(max(grid_col * SQUARE_SIZE, 0), board_width - TILE_SIZE) + 2.5, (min(max(grid_row * SQUARE_SIZE, 0), board_height - TILE_SIZE) + 12.5) if self.ori_y // SQUARE_SIZE == 15 else min(max(grid_row * SQUARE_SIZE, 0), board_height - TILE_SIZE) + 2.5
+                    event.widget.place_configure(x=snap_x, y=snap_y)
+                    self.tile = None
                 else:
-                    print(f"Tile '{self.letters[event.widget]}' placed at board:", grid_col, grid_row)
-                    self.b.add_play(self.letters[event.widget], grid_col, grid_row)
-                    self.board[grid_row][grid_col].set_letterTile_split(self.letters[event.widget], grid_col, grid_row)
-                    snap_x, snap_y = min(max(grid_col * SQUARE_SIZE, 0), board_width - TILE_SIZE) + 2.5, min(max(grid_row * SQUARE_SIZE, 0), board_height - TILE_SIZE) + 2.5
-                    grid_col, grid_row = self.ori_x // SQUARE_SIZE, self.ori_y // SQUARE_SIZE
-                    if grid_row == 15:
-                        print(f"Tile '{self.letters[event.widget]}' gone from hand:", grid_col - 4)
-                        hand[grid_col - 4] = "-"
+                    if(self.letters[event.widget].get_points() == 0):
+                        snap_x, snap_y = min(max(grid_col * SQUARE_SIZE, 0), board_width - TILE_SIZE) + 2.5, min(max(grid_row * SQUARE_SIZE, 0), board_height - TILE_SIZE) + 2.5
+                        open_wild_window(self.set_wild_letter, event, snap_x, snap_y, grid_col, grid_row)
                     else:
-                        print(f"Tile '{self.letters[event.widget]}' gone from board:", grid_col, grid_row)
-                        self.b.remove_play(self.letters[event.widget], grid_col, grid_row)
-                        self.board[grid_row][grid_col].set_letterTile(None)
-            event.widget.place_configure(x=snap_x, y=snap_y)
-            self.tile = None
-            
+                        print(f"Tile '{self.letters[event.widget].get_letter()}' placed at board:", grid_col, grid_row)
+                        self.b.add_play(self.letters[event.widget].get_letter(), grid_col, grid_row)
+                        self.board[grid_row][grid_col].set_letterTile_split(self.letters[event.widget].get_letter(), grid_col, grid_row)
+                        snap_x, snap_y = min(max(grid_col * SQUARE_SIZE, 0), board_width - TILE_SIZE) + 2.5, min(max(grid_row * SQUARE_SIZE, 0), board_height - TILE_SIZE) + 2.5
+                        grid_col, grid_row = self.ori_x // SQUARE_SIZE, self.ori_y // SQUARE_SIZE
+                        if grid_row == 15:
+                            print(f"Tile '{self.letters[event.widget].get_letter()}' gone from hand:", grid_col - 4)
+                            hand[grid_col - 4] = "-"
+                        else:
+                            print(f"Tile '{self.letters[event.widget].get_letter()}' gone from board:", grid_col, grid_row)
+                            self.b.remove_play(grid_col, grid_row)
+                            self.board[grid_row][grid_col].set_letterTile(None)
+                        event.widget.place_configure(x=snap_x, y=snap_y)
+                        self.tile = None
+
 def shuffle_hand(w, b):
     global hand, ori_hand
     random.shuffle(ori_hand)
@@ -105,6 +134,7 @@ def submit(w, b):
         if(points != -1):
             player_score += points
         w.destroy()
+
         print("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4")
         for i, row in enumerate(b.board):
             print(str(i % 10) + " ", end="")
@@ -115,7 +145,11 @@ def submit(w, b):
                     print(t.get_letter() + " ", end="")
             print("")
         print("")
-        open_window(b)
+        
+        b.clear_play()
+        b.print_board()
+    else:
+        b.clear_play()
 
 def submit_board(w, b, board):
     submit(w, b)
@@ -124,6 +158,7 @@ def submit_board(w, b, board):
 def open_window(b):
     global board_frame, bar_frame, hand, ori_hand
     board = copy.deepcopy(b.board)
+    ori_hand = b.get_players()[b.get_playerToMove()].get_hand()
     hand = ori_hand.copy()
 
     window = Tk()
@@ -139,7 +174,7 @@ def open_window(b):
     bar_frame = ttk.Frame(window)
     btn_frame = ttk.Frame(window)
 
-    drag_tile_manager = DragTileManager(board_frame, board, b)
+    drag_tile_manager = DragTileManager(window, board_frame, board, b)
 
     board_frame.place(relx=0.5, rely=0.45, anchor = CENTER)
     bar_frame.place(x = 0, rely = 0.85, relheight = 0.05, relwidth = 1)
@@ -160,7 +195,7 @@ def open_window(b):
     quit_btn.grid(row = 0, column = 3)
 
     style.configure("Turn.TLabel", font = ("Helvetica", 15, "bold"))
-    turn_lbl = ttk.Label(bar_frame, text = f"Score: {player_score}", style = "Turn.TLabel", anchor = "center")
+    turn_lbl = ttk.Label(bar_frame, text = f"Player 1: {b.players[0].get_score()} | Player 2: {b.players[1].get_score()}", style = "Turn.TLabel", anchor = "center")
     turn_lbl.pack()
 
     for row in range(len(board)):
@@ -181,7 +216,7 @@ def open_window(b):
                 square = Canvas(board_frame, width=TILE_SIZE, height=TILE_SIZE, bg="burlywood1", highlightthickness=0)
                 score = SCRABBLE_LETTER_POINTS.get(board[row][col].get_letter(), 0)
                 square.create_text(TILE_SIZE - 6, TILE_SIZE - 6, text=f"{score}", font=("Helvetica", 6))
-                square.create_text(TILE_SIZE // 2, TILE_SIZE // 2, text=board[row][col].get_letter(), font=("Helvetica", 10))
+                square.create_text(TILE_SIZE // 2, TILE_SIZE // 2, text=board[row][col].get_letter().upper(), font=("Helvetica", 10))
                 square.create_rectangle(0, 0, TILE_SIZE, TILE_SIZE, outline="black")
                 square.grid(row=row, column=col)
 
@@ -196,9 +231,9 @@ def open_window(b):
         square = Canvas(board_frame, width=TILE_SIZE, height=TILE_SIZE, bg='burlywood', highlightthickness=0)
         square.create_rectangle(0, 0, TILE_SIZE, TILE_SIZE, outline="black")
         square.grid(row=17, column=col+4)
-        score = SCRABBLE_LETTER_POINTS.get(letter.upper(), 0)
+        score = SCRABBLE_LETTER_POINTS.get(letter.get_letter().upper(), 0)
         square.create_text(TILE_SIZE - 6, TILE_SIZE - 6, text=f"{score}", font=("Helvetica", 6))
-        square.create_text(TILE_SIZE // 2, TILE_SIZE // 2, text=f"{letter}", font=("Helvetica", 10))
+        square.create_text(TILE_SIZE // 2, TILE_SIZE // 2, text=f"{letter.get_letter()}", font=("Helvetica", 10))
         square.create_rectangle(0, 0, TILE_SIZE, TILE_SIZE, outline="black")
         drag_tile_manager.add_tile(square, letter)
 

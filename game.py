@@ -41,7 +41,10 @@ class LetterTile:
         self.x = x
         self.y = y
         if is_blank == False:
-            self.point = SCRABBLE_LETTER_POINTS[letter]
+            if(letter.islower()):
+                self.point = 0
+            else:
+                self.point = SCRABBLE_LETTER_POINTS[letter]
         else:
             self.point = 0
         self.put_on_round = -1
@@ -53,6 +56,10 @@ class LetterTile:
         return self.x
     def get_y(self):
         return self.y
+    def set_letter(self, letter):
+        self.letter = letter
+    def reset_letter(self):
+        self.letter = "?"
     def get_letter(self):
         return self.letter
     def get_points(self):
@@ -114,19 +121,25 @@ class Board:
         self.players = []
         self.players.append(agent.Player(0, self.bag.get_n_tiles(7), self))
         self.players.append(agent.Player(1, self.bag.get_n_tiles(7), self))
+    def get_players(self):
+        return self.players
+    def get_playerToMove(self):
+        return self.playerToMove
     def get_bag(self):
         return self.bag
     def get_play(self):
         return self.play
+    def clear_play(self):
+        self.play = []
     def check_play(self):
         return len(self.play) != 0
     def add_play(self, letter, x, y):
         self.play.append(LetterTile(letter, x, y))
         for tile in self.play:
             print(tile.get_letter(), tile.get_x(), tile.get_y())
-    def remove_play(self, letter, x, y):
+    def remove_play(self, x, y):
         for tile in self.play:
-            if(tile.get_letter() == letter and tile.get_x() == x and tile.get_y() == y):
+            if(tile.get_x() == x and tile.get_y() == y):
                 self.play.remove(tile)
                 for tile in self.play:
                     print(tile.get_letter(), tile.get_x(), tile.get_y())
@@ -170,7 +183,7 @@ class Board:
             if not is_on_center:
                 return False
             elif is_on_center:
-                is_connected = True        
+                is_connected = True  
         if play[0].get_y() != 0:
             if self.board[play[0].get_y() - 1][play[0].get_x()].get_letterTile() != None:
                 is_connected = True
@@ -580,6 +593,7 @@ class Board:
         """
         t = False
         t = self.check_valid_play(play)
+        print(f"Play is {t}")
         # "retakes" letter tiles if the word is not valid
         if t == False:
             for p in play:
@@ -607,8 +621,8 @@ class Board:
             for l in playerMoved.board.get_bag().get_n_tiles(len(play)):
                 hand.append(l)
             playerMoved.set_hand(hand)
-            self.playerToMove = ((self.round) % 2)
             self.round += 1
+            self.playerToMove = (self.round + 1) % 2
         self.play.clear()
         return pts
     def print_board(self):
@@ -623,11 +637,13 @@ class Board:
                     print(t.get_letter() + " ", end="")
             print("")
         print("")
-        print("PLayer 0: " + str(self.players[0].get_score()))
-        print("PLayer 1: " + str(self.players[1].get_score()))
-        print("Player to move: " + str(self.playerToMove))
-        print("Hand: " + str(self.players[self.playerToMove].print_hand()))
-        # open_window(self)
+        print("Player 1: " + str(self.players[0].get_score()))
+        print("Player 2: " + str(self.players[1].get_score()))
+        print("Player to move: " + str(self.playerToMove + 1))
+        print("Hand: ", end="")
+        self.players[self.playerToMove].print_hand()
+        print("Round: " + str(self.round))
+        open_window(self)
         
     def get_input(self):
         print("Place Play, type 'done' to play: (Use all Caps)")
