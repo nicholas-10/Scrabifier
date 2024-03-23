@@ -629,7 +629,9 @@ class Board:
         # "retakes" letter tiles if the word is not valid
         if t == False:
             for p in play:
-                self.board[p.get_y()][ p.get_x()].set_letterTile(None)
+                self.board[p.get_y()][p.get_x()].set_letterTile(None)
+                # Check for '?' LetterTile here (?)
+                self.players[self.playerToMove].reset_wild_in_hand()
             return -1
         pts = 0
         if t == True:

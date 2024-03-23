@@ -12,6 +12,10 @@ class Player:
         return self.hand
     def set_hand(self, hand):
         self.hand = hand
+    def reset_wild_in_hand(self):
+        for h in self.hand:
+            if(h.get_letter().islower()):
+                h.reset_letter()
     def print_hand(self):
         print("|", end = "")
         for h in self.hand:
