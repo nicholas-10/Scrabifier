@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from constants import *
 from graphics_wild import open_wild_window
+from graphics_exchange import open_exchange_window
 import random
 import copy
 
@@ -188,7 +189,7 @@ def open_window(b):
 
     style.configure("Bar.TButton", font=("Ubuntu", 10))
     shuffle_btn = ttk.Button(btn_frame, text = "Shuffle", style="Bar.TButton", command=lambda: shuffle_hand(window, b))
-    exchange_btn = ttk.Button(btn_frame, text = "Exchange", style="Bar.TButton")
+    exchange_btn = ttk.Button(btn_frame, text = "Exchange", style="Bar.TButton", command=lambda: open_exchange_window(exit, hand))
     submit_btn = ttk.Button(btn_frame, text = "Submit", style="Bar.TButton", command=lambda: submit_board(window, b, board))
     quit_btn = ttk.Button(btn_frame, text = "Quit", style="Bar.TButton", command=lambda: exit(window))
 
