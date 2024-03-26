@@ -120,6 +120,9 @@ class DragTileManager():
                         event.widget.place_configure(x=snap_x, y=snap_y)
                         self.tile = None
 
+def exit(w):
+    w.destroy()
+
 def shuffle_hand(w, b):
     global hand, ori_hand
     random.shuffle(ori_hand)
@@ -187,7 +190,7 @@ def open_window(b):
     shuffle_btn = ttk.Button(btn_frame, text = "Shuffle", style="Bar.TButton", command=lambda: shuffle_hand(window, b))
     exchange_btn = ttk.Button(btn_frame, text = "Exchange", style="Bar.TButton")
     submit_btn = ttk.Button(btn_frame, text = "Submit", style="Bar.TButton", command=lambda: submit_board(window, b, board))
-    quit_btn = ttk.Button(btn_frame, text = "Quit", style="Bar.TButton")
+    quit_btn = ttk.Button(btn_frame, text = "Quit", style="Bar.TButton", command=lambda: exit(window))
 
     shuffle_btn.grid(row = 0, column = 0)
     exchange_btn.grid(row = 0, column = 1)
