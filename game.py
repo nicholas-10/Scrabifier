@@ -68,6 +68,8 @@ class LetterTile:
         return self.put_on_round
     def set_put_on_round(self, put_on_round):
         self.put_on_round = put_on_round
+    def __str__(self):
+        return f"{self.letter}"
 class Bag:
     def __init__(self):
         self.bag = {}
@@ -76,6 +78,19 @@ class Bag:
         for k, v in INITIAL_SCRABBLE_BAG_COUNT.items():
             self.remainingTiles += v
             self.bag[k] = v
+    def exchange(self, n, Letters):
+        """
+        Exchanges n letter tiles in LetterTile list in Letters, returns new LetterTile List
+        """
+        newLetters = self.get_n_tiles(n)
+        keys = list(self.bag.keys())
+        for l in Letters:
+            if l.get_letter() in keys:
+                self.bag[l.get_letter()] += 1
+            else:
+                self.bag[l.get_letter()] = 1
+                keys = list(self.bag.keys())
+        return newLetters
     def get_n_tiles(self, n):
         """
         Gets n LetterTile objects, returns list of the LetterTile objects

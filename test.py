@@ -182,7 +182,7 @@ def test_case(print_board = False):
     print("INN Horizontal Starting at (7, 11) " + "returns " +str(points) + " which is " + str(points == 3))
     b.print_board() if print_board else None
 
-test_case(print_board=False)
+# test_case(print_board=False)
 
 def test_case_2():
     b = Board()
@@ -192,3 +192,32 @@ def test_case_2():
 
 def test_player():
     pass
+
+def test_exchange():
+    b = Bag()
+    print(b.bag)
+    temp = (b.exchange(3, [LetterTile("O", 12, 1), LetterTile("O", 12, 1), LetterTile("O", 9, 3)]))
+    for t in temp:
+        print(t, end="")
+    print(b.bag)
+    print()
+
+    b = Bag()
+    b.bag = {'A': 9, 'B': 2, 'C': 2, 'D': 4, 'E': 12, 'F': 2, 'G': 3, 'H': 2, 'I': 9, 'J': 1, 'K': 1, 'L': 4, 'M': 2, 'N': 6, 'O': 8, 'P': 2, 'Q': 1, 'R': 6, 'S': 4, 'T': 6, 'U': 4, 'V': 2, 'W': 2, 'X': 1, 'Y': 2, '?': 2}
+    print(b.bag)
+    
+    temp = (b.exchange(5, [LetterTile("Q", 12, 1), LetterTile("Z", 12, 1), LetterTile("O", 12, 1), LetterTile("O", 12, 1), LetterTile("O", 9, 3)]))
+    for t in temp:
+        print(t, end="")
+    print(b.bag)
+
+    print()
+    b = Bag()
+    print(b.bag)
+
+    temp = (b.exchange(7, [LetterTile("O", 12, 1), LetterTile("O", 12, 1), LetterTile("O", 12, 1), LetterTile("O", 12, 1),LetterTile("O", 12, 1), LetterTile("O", 12, 1), LetterTile("O", 9, 3)]))
+    for t in temp:
+        print(t, end="")
+    print(b.bag)
+
+test_exchange()
