@@ -108,6 +108,51 @@ def ExtendRight(Square,Board,hand,play,Direction,allsuffixes,hands,words,x,y):
                 ExtendRight(Board[x+1][y],Board,hand,play+temp,Direction,allsuffixes,hands,words,x+1,y)
                 hand.insert(i,temp)
                 print("Appended")
+def ExtendLeft(Square,Board,hand,play,Direction,allsuffixes,allhands,words,x,y):
+    k=0
+    while k < len(play):
+        if len(play)==0 or not hand:
+            k=k+1
+            play=allsuffixes[k]
+            hand=allhands[k]
+            continue #if suffixathand is none, break and continue to another suffix from allsuffixes
+            #returns for every checked exit point, so no ambiguity here
+        for j in range(0,len(allhands[k])):
+            if Direction =="Horizontal" and x>0 and Square.get_letterTile()==None and hand:
+                sentinel=0
+                if Board[x-2][y].get_letterTile()==None:
+                    if wordCheckerReversed.check_word(play+allhands[k][j]) and sentinel==0 and Board[x-1][y].get_letterTile==None:
+                        words.append((play+allhands[k][j])[::-1])
+                    if wordCheckerReversed.dictionary.t.has_subtrie(play+allhands[k][j])==True and cross_check(allhands[k][j],"Horizontal",Board,x,y):
+                        temp=allhands[k]
+                        allhands[k].remove(allhands[k])
+                        ExtendRight(Board[x-1][y],Board,hand,play+allhands[k][j],Direction,allsuffixes,allhands,words,x,y)
+                        allhands[k].insert(k,temp)
+                        print("Appended")
+            if Direction=="Vertical" and y>0 and Square.get_letterTile()==None and hand:
+                if Board[x][y-2].get_letterTile()==None:
+                    sentinel=0
+                    if wordCheckerReversed.check_word(play+allhands[k][j]) and sentinel ==0 and Board[x][y-1].get_letterTile==None:
+                        words.append((play+allhands[k][j][::-1]))
+                    if wordCheckerReversed.dictionary.t.has_subtrie(play+allhands[k][j])==True and cross_check(allhands[k][j],"Vertical",Board,x,y):
+                        temp=allhands[k]
+                        allhands[k].remove(allhands[k])
+                        ExtendRight(Board[x][y+1],Board,hand,play+allhands[k][j],Direction,allsuffixes,allhands,words,x,y)
+                        allhands[k].insert(k,temp)
+                        print("Appended")
+    play=""
+def DictionaryReversal(filename):
+    with open (filename,"r") as file:
+        words=file.readlines()
+    words=[(word.rstrip())[::-1] for word in words]
+    file = open("revdictionary.txt","w")
+    file.writelines(words)
+    file.close()
+
+def wordSearch(Square,Board,hand,play,Direction,allsuffixes,allhands,words,x,y):
+ ExtendRight(Square,Board,hand,play,Direction,allsuffixes,allhands,words,x,y)
+ play=""
+ ExtendLeft(Square,Board,hand,play,Direction,allsuffixes,allhands,words,x,y)
     
 def cross_check(LetterTile,Direction,Board):
     word=[LetterTile]
