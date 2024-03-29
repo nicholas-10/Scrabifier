@@ -42,30 +42,20 @@ def CheckInclude(stringname):
     print("Object Found")
     return
 
-def GADDAGAdder(stringname,array):
-    array.append(stringname)
-    for i in range(1,len(stringname),1):
-        array.append(stringname[-1:-i-1:-1]+'+'+stringname[0:len(stringname)-i:1])
-
-newlist=list()
-GADDAGAdder("zero",newlist)
-print(newlist)
-
-for i in strings:
-    CheckInclude(i)
-
-import game as g
-import test as t
-
-wordChecker=g.Dictionary("dictionary.txt")
-#Row/Column Checker
-
-
 import game as g
 import copy as copy
 import util 
 wordChecker=g.Dictionary("dictionary.txt")
+def GADDAGAdder(stringname,array):
+    for i in range(1,len(stringname),1):
+        array.append(stringname[0:i][::-1]+'+'+stringname[i:len(stringname)])
+    array.append(stringname[::-1])
+array=[]
+GADDAGAdder("AARDVARK",array)
+print(array)
+
 wordCheckerReversed=g.Dictionary("revdictionary.txt")
+
 #Row/Column Checker
 # Flow:
 # We start by putting a play container so that its extendable to the right.
@@ -94,7 +84,7 @@ def ExtendRight(Square,Board,hand,play,Direction,allsuffixes,hands,words,x,y):
                 allsuffixes.append((play+temp)[::-1])
                 hands.append(hand)
                 hand.insert(i,temp)
-            if wordChecker.dictionary.t.has_subtrie(play+hand[i])==True and cross_check(hand[i],"Vertical",Board,x,y):
+            if (wordChecker.dictionary.t.has_subtrie(play+hand[i])==True or wordCheckerReversed.dictionary.t.has_subtrie((play+hand[i])[::-1])) and cross_check(hand[i],"Vertical",Board,x,y):
                 print("Extension entered")
                 temp=hand[i]
                 hand.remove(hand[i])
@@ -117,7 +107,7 @@ def ExtendRight(Square,Board,hand,play,Direction,allsuffixes,hands,words,x,y):
                 allsuffixes.append((play+temp)[::-1])
                 hands.append(copy.deepcopy(hand))
                 hand.insert(i,temp)
-            if wordChecker.dictionary.t.has_subtrie(play+hand[i])==True and cross_check(hand[i],"Horizontal",Board,x,y):
+            if (wordChecker.dictionary.t.has_subtrie(play+hand[i])==True or wordCheckerReversed.dictionary.t.has_subtrie((play+hand[i])[::-1]))and cross_check(hand[i],"Horizontal",Board,x,y):
                 print("Extension entered")
                 temp=hand[i]
                 hand.remove(hand[i])
@@ -135,14 +125,24 @@ def ExtendLeft(Square,Board,hand,play,Direction,words,x,y):
                     if Board[x-2][y].get_letterTile()!=None:
                         break
                 if wordCheckerReversed.check_word(play+hand[m]) and Board[x-1][y].get_letterTile()==None:
-                    words.append((play+hand[m])[::-1])
-
+                    emptyword=""
+                    for i in range(0,len(play+hand[m])):
+                        phase=0
+                        if phase==0:
+                            if (play+hand[m])[i]=='+':
+                                phase=1
+                            else:
+                                emptyword=(play+hand[m])[i]+emptyword
+                        if phase==1:
+                            emptyword=emptyword+(play+hand[m])[i]
+                    words.append(emptyword)
+                    print("Reversed True")
                 if wordCheckerReversed.dictionary.t.has_subtrie(play+hand[m])==True and cross_check(hand[m],"Horizontal",Board,x,y):
                     temp=hand[m]
                     hand.remove(hand[m])
                     ExtendLeft(Board[x-1][y],Board,hand,play+temp,Direction,words,x-1,y)
                     hand.insert(m,temp)
-                    print("Appended")
+                    
             if Direction=="Vertical" and y>0 and Square.get_letterTile()==None and hand:
                 if y>2:
                     if Board[x][y-2].get_letterTile()!=None:
@@ -165,13 +165,17 @@ def wordSearch(Square,Board,hand,play,Direction,allsuffixes,allhands,words,x,y):
     hand=allhands[i]
     ExtendLeft(Square,Board,hand,play,Direction,words,x,y)
 
-def DictionaryReversal(filename):
+def DictionaryGADDAG(filename):
     with open (filename,"r") as file:
         words=file.readlines()
-    words=[(word.rstrip())[::-1] for word in words]
+    words=[word.rstrip() for word in words]
     file = open("revdictionary.txt","w")
+    array=[]
     for k in words:
-        file.write(k+"\n")
+        GADDAGAdder(k,array)
+    print(array)
+    for i in array:
+        file.write(i+"\n")
     file.close()
 
 
@@ -223,14 +227,25 @@ suffixlist=[]
 words=[]
 play=[]
 hands=[]
+DictionaryGADDAG("dictionary.txt")
 #DictionaryReversal("dictionary.txt")
-wordSearch(abc.board[0][0],abc.board,["A","B","A","R","I","L","E"],"","Horizontal",suffixlist,hands,words,3,3)
-print(suffixlist)
-print(hands)
+wordSearch(abc.board[0][0],abc.board,["S","T","A","B","A","L","E"],"","Horizontal",suffixlist,hands,words,3,3)
 print(words)
 print(""+"a")
 
 print((wordChecker.dictionary.t.has_subtrie("AD")))
+
+def BoardScanner(Board,hand):
+    for i in range(0,16,1):
+        for j in range(0,16,1):
+            if Board[i][j+1].get_letterTile()!=None:
+                suffixlist=[]
+                hands=[]
+                wordSearch(Board[i][j],Board,hand,"","Vertical",suffixlist,hands,words,i,j)
+            if Board[i+1][j].get_letterTile()!=None:
+                suffixlist=[]
+                hands=[]
+                wordSearch(Board[i][j],Board,hand,"","Horizontal",suffixlist,hands,words,i,j)
 
 
 
