@@ -80,14 +80,14 @@ def ExtendRight(Square,Board,hand,play,Direction,allsuffixes,hands,words,x,y):
             if wordCheckerReversed.dictionary.t.has_subtrie((play+hand[i])[::-1])==True :
                 print("Check Reversed")
                 temp=hand[i]
-                hand.remove(hand[i])
+                hand.pop(i)
                 allsuffixes.append((play+temp)[::-1])
                 hands.append(hand)
                 hand.insert(i,temp)
             if (wordChecker.dictionary.t.has_subtrie(play+hand[i])==True or wordCheckerReversed.dictionary.t.has_subtrie((play+hand[i])[::-1])) and cross_check(hand[i],"Vertical",Board,x,y):
                 print("Extension entered")
                 temp=hand[i]
-                hand.remove(hand[i])
+                hand.pop(i)
                 ExtendRight(Board[x][y+1],Board,hand,play+temp,Direction,allsuffixes,hands,words,x,y+1)
                 hand.insert(i,temp)
                 print("Appended")
@@ -103,14 +103,14 @@ def ExtendRight(Square,Board,hand,play,Direction,allsuffixes,hands,words,x,y):
             if wordCheckerReversed.dictionary.t.has_subtrie((play+hand[i])[::-1])==True:
                 print("Check Reversed")
                 temp=hand[i]
-                hand.remove(hand[i])
+                hand.pop(i)
                 allsuffixes.append((play+temp)[::-1])
                 hands.append(copy.deepcopy(hand))
                 hand.insert(i,temp)
             if (wordChecker.dictionary.t.has_subtrie(play+hand[i])==True or wordCheckerReversed.dictionary.t.has_subtrie((play+hand[i])[::-1]))and cross_check(hand[i],"Horizontal",Board,x,y):
                 print("Extension entered")
                 temp=hand[i]
-                hand.remove(hand[i])
+                hand.pop(i)
                 ExtendRight(Board[x+1][y],Board,hand,play+temp,Direction,allsuffixes,hands,words,x+1,y)
                 hand.insert(i,temp)
                 print("Appended")
@@ -139,7 +139,7 @@ def ExtendLeft(Square,Board,hand,play,Direction,words,x,y):
                     print("Reversed True")
                 if wordCheckerReversed.dictionary.t.has_subtrie(play+hand[m])==True and cross_check(hand[m],"Horizontal",Board,x,y):
                     temp=hand[m]
-                    hand.remove(hand[m])
+                    hand.pop(m)
                     ExtendLeft(Board[x-1][y],Board,hand,play+temp,Direction,words,x-1,y)
                     hand.insert(m,temp)
                     
@@ -151,7 +151,7 @@ def ExtendLeft(Square,Board,hand,play,Direction,words,x,y):
                     words.append((play+hand[m][::-1]))
                 if wordCheckerReversed.dictionary.t.has_subtrie(play+hand[m])==True and cross_check(hand[m],"Vertical",Board,x,y):
                     temp=hand[m]
-                    hand.remove(hand[m])
+                    hand.pop(m)
                     ExtendLeft(Board[x][y-1],Board,hand,play+temp,Direction,words,x,y-1)
                     hand.insert(m,temp)
                     print("Appended")
@@ -229,7 +229,7 @@ play=[]
 hands=[]
 DictionaryGADDAG("dictionary.txt")
 #DictionaryReversal("dictionary.txt")
-wordSearch(abc.board[0][0],abc.board,["S","T","A","B","A","L","E"],"","Horizontal",suffixlist,hands,words,3,3)
+wordSearch(abc.board[0][0],abc.board,["A","B","A","B","A","L","E"],"","Horizontal",suffixlist,hands,words,3,3)
 print(words)
 print(""+"a")
 
