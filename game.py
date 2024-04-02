@@ -140,6 +140,11 @@ class Board:
         return self.players
     def get_playerToMove(self):
         return self.playerToMove
+    def switchPlayerToMove(self):
+        if(self.playerToMove == 0):
+            self.playerToMove = 1
+        else:
+            self.playerToMove = 0
     def get_bag(self):
         return self.bag
     def get_play(self):
@@ -677,7 +682,8 @@ class Board:
                 hand.append(l)
             playerMoved.set_hand(hand)
             self.round += 1
-            self.playerToMove = (self.round + 1) % 2
+            self.switchPlayerToMove()
+            # self.playerToMove = (self.round + 1) % 2
         self.play.clear()
         return pts
     def print_board(self):

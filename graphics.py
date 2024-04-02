@@ -131,10 +131,14 @@ def shuffle_hand(w, b):
     w.destroy()
     open_window(b)
     
-def exchange_hand(hand, b):
+def exchange_hand(hand, b, w, ex):
     b.get_players()[b.get_playerToMove()].set_hand(hand)
     ori_hand = hand.copy()
     hand = ori_hand.copy()
+    if ex:
+        b.switchPlayerToMove()
+    w.destroy()
+    open_window(b)
 
 def submit(w, b):
     global player_score
@@ -194,7 +198,7 @@ def open_window(b):
 
     style.configure("Bar.TButton", font=("Ubuntu", 10))
     shuffle_btn = ttk.Button(btn_frame, text = "Shuffle", style="Bar.TButton", command=lambda: shuffle_hand(window, b))
-    exchange_btn = ttk.Button(btn_frame, text = "Exchange", style="Bar.TButton", command=lambda: open_exchange_window(exchange_hand, hand, b))
+    exchange_btn = ttk.Button(btn_frame, text = "Exchange", style="Bar.TButton", command=lambda: open_exchange_window(exchange_hand, hand, [], b, window))
     submit_btn = ttk.Button(btn_frame, text = "Submit", style="Bar.TButton", command=lambda: submit_board(window, b, board))
     quit_btn = ttk.Button(btn_frame, text = "Quit", style="Bar.TButton", command=lambda: exit(window))
 

@@ -2,17 +2,28 @@ from tkinter import *
 from tkinter import ttk
 from constants import *
 
-def open_exchange_window(callback, hand, b):
+def open_exchange_window(callback, hand, exchange, b, w):
     def letters_chosen(exchange):
         window.destroy()
         new = b.get_bag().exchange(len(exchange), exchange)
         new_hand = hand.copy()
+        ex = False
         if(len(new) != 0):
-            new_hand.append(new)
-        print(new_hand)
-        callback(new_hand, b)
+            ex = True
+            new_hand.extend(new)
+        callback(new_hand, b, w, ex)
 
-    exchange = []
+    def add_to_exchange(letter):
+        hand.remove(letter)
+        exchange.append(letter)
+        window.destroy()
+        open_exchange_window(callback, hand, exchange, b, w)
+
+    def remove_from_exchange(letter):
+        exchange.remove(letter)
+        hand.append(letter)
+        window.destroy()
+        open_exchange_window(callback, hand, exchange, b, w)
 
     window = Tk()
     style = ttk.Style()
@@ -56,10 +67,21 @@ def open_exchange_window(callback, hand, b):
         square.create_text(TILE_SIZE - 6, TILE_SIZE - 6, text=f"{score}", font=("Helvetica", 6))
         square.create_text(TILE_SIZE // 2, TILE_SIZE // 2, text=f"{letter.get_letter()}", font=("Helvetica", 10))
         square.create_rectangle(0, 0, TILE_SIZE, TILE_SIZE, outline="black")
+        square.bind("<Button-1>", lambda e, l=letter: add_to_exchange(l))
 
     for col in range(7):
         square = Canvas(end_frame, width=SQUARE_SIZE, height=SQUARE_SIZE, bg='beige', highlightthickness=0)
         square.create_rectangle(0, 0, SQUARE_SIZE, SQUARE_SIZE, outline="black")
         square.grid(row=1, column=col+4)
+
+    for col, letter in enumerate(exchange):
+        square = Canvas(end_frame, width=TILE_SIZE, height=TILE_SIZE, bg='burlywood', highlightthickness=0)
+        square.create_rectangle(0, 0, TILE_SIZE, TILE_SIZE, outline="black")
+        square.grid(row=1, column=col+4)
+        score = SCRABBLE_LETTER_POINTS.get(letter.get_letter().upper(), 0)
+        square.create_text(TILE_SIZE - 6, TILE_SIZE - 6, text=f"{score}", font=("Helvetica", 6))
+        square.create_text(TILE_SIZE // 2, TILE_SIZE // 2, text=f"{letter.get_letter()}", font=("Helvetica", 10))
+        square.create_rectangle(0, 0, TILE_SIZE, TILE_SIZE, outline="black")
+        square.bind("<Button-1>", lambda e, l=letter: remove_from_exchange(l))
 
     window.mainloop()
