@@ -188,7 +188,7 @@ def test_case_2():
     b = Board()
     b.print_board()
 
-# test_case_2()
+test_case_2()
 
 def test_player():
     pass
@@ -220,4 +220,4 @@ def test_exchange():
         print(t, end="")
     print(b.bag)
 
-test_exchange()
+# test_exchange()

@@ -2,10 +2,17 @@ from tkinter import *
 from tkinter import ttk
 from constants import *
 
-def open_exchange_window(callback, hand):
-    def letters_chosen(letters):
+def open_exchange_window(callback, hand, b):
+    def letters_chosen(exchange):
         window.destroy()
-        callback(letters)
+        new = b.get_bag().exchange(len(exchange), exchange)
+        new_hand = hand.copy()
+        if(len(new) != 0):
+            new_hand.append(new)
+        print(new_hand)
+        callback(new_hand, b)
+
+    exchange = []
 
     window = Tk()
     style = ttk.Style()
@@ -33,7 +40,7 @@ def open_exchange_window(callback, hand):
     show_lbl = ttk.Label(show_frame, text="Pick letters to exchange", style="Show.TLabel", anchor="center")
     show_lbl.pack()
 
-    exchange_button = ttk.Button(show_frame, text="Exchange", command=lambda: letters_chosen('selected_letters'))
+    exchange_button = ttk.Button(show_frame, text="Exchange", command=lambda: letters_chosen(exchange))
     exchange_button.pack()
 
     for col in range(7):
