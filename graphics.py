@@ -5,6 +5,7 @@ from graphics_wild import open_wild_window
 from graphics_exchange import open_exchange_window
 import random
 import copy
+import sys
 
 player_score = 0
 
@@ -123,7 +124,11 @@ class DragTileManager():
 
 def exit(w):
     w.destroy()
-
+    sys.exit()
+def pass_turn(w, b):
+    w.destroy()
+    b.switchPlayerToMove()
+    open_window(b)
 def shuffle_hand(w, b):
     global hand, ori_hand
     random.shuffle(ori_hand)
@@ -148,16 +153,16 @@ def submit(w, b):
             player_score += points
         w.destroy()
 
-        print("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4")
-        for i, row in enumerate(b.board):
-            print(str(i % 10) + " ", end="")
-            for t in row:
-                if t.get_letterTile() == None:
-                    print("- ", end="")
-                else:
-                    print(t.get_letter() + " ", end="")
-            print("")
-        print("")
+        # print("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4")
+        # for i, row in enumerate(b.board):
+        #     print(str(i % 10) + " ", end="")
+        #     for t in row:
+        #         if t.get_letterTile() == None:
+        #             print("- ", end="")
+        #         else:
+        #             print(t.get_letter() + " ", end="")
+        #     print("")
+        # print("")
         
         b.clear_play()
         b.print_board()
@@ -193,7 +198,7 @@ def open_window(b):
     bar_frame.place(x = 0, rely = 0.85, relheight = 0.05, relwidth = 1)
     btn_frame.place(x = 0, rely = 0.9, relheight = 0.05, relwidth = 1)
 
-    btn_frame.columnconfigure((0, 1, 2, 3), weight = 1, uniform = "a")
+    btn_frame.columnconfigure((0, 1, 2, 3, 4), weight = 1, uniform = "a")
     btn_frame.rowconfigure((0), weight = 1, uniform = "a")
 
     style.configure("Bar.TButton", font=("Ubuntu", 10))
@@ -202,10 +207,14 @@ def open_window(b):
     submit_btn = ttk.Button(btn_frame, text = "Submit", style="Bar.TButton", command=lambda: submit_board(window, b, board))
     quit_btn = ttk.Button(btn_frame, text = "Quit", style="Bar.TButton", command=lambda: exit(window))
 
+    pass_btn = ttk.Button(btn_frame, text = "Pass", style="Bar.TButton", command=lambda: pass_turn(window, b))
+
     shuffle_btn.grid(row = 0, column = 0)
     exchange_btn.grid(row = 0, column = 1)
     submit_btn.grid(row = 0, column = 2)
-    quit_btn.grid(row = 0, column = 3)
+    pass_btn.grid(row = 0, column = 3)
+
+    quit_btn.grid(row = 0, column = 4)
 
     style.configure("Turn.TLabel", font = ("Helvetica", 15, "bold"))
     turn_lbl = ttk.Label(bar_frame, text = f"Player 1: {b.players[0].get_score()} | Player 2: {b.players[1].get_score()}", style = "Turn.TLabel", anchor = "center")

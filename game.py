@@ -687,23 +687,23 @@ class Board:
         self.play.clear()
         return pts
     def print_board(self):
-        print("Player to Move: " + str(self.playerToMove))
-        print("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4")
-        for i, row in enumerate(self.board):
-            print(str(i % 10) + " ", end="")
-            for t in row:
-                if t.get_letterTile() == None:
-                    print("- ", end="")
-                else:
-                    print(t.get_letter() + " ", end="")
-            print("")
-        print("")
-        print("Player 1: " + str(self.players[0].get_score()))
-        print("Player 2: " + str(self.players[1].get_score()))
-        print("Player to move: " + str(self.playerToMove + 1))
-        print("Hand: ", end="")
-        self.players[self.playerToMove].print_hand()
-        print("Round: " + str(self.round))
+        # print("Player to Move: " + str(self.playerToMove))
+        # print("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4")
+        # for i, row in enumerate(self.board):
+        #     print(str(i % 10) + " ", end="")
+        #     for t in row:
+        #         if t.get_letterTile() == None:
+        #             print("- ", end="")
+        #         else:
+        #             print(t.get_letter() + " ", end="")
+        #     print("")
+        # print("")
+        # print("Player 1: " + str(self.players[0].get_score()))
+        # print("Player 2: " + str(self.players[1].get_score()))
+        # print("Player to move: " + str(self.playerToMove + 1))
+        # print("Hand: ", end="")
+        # self.players[self.playerToMove].print_hand()
+        # print("Round: " + str(self.round))
         open_window(self)
         
     def get_input(self):
