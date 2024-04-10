@@ -331,7 +331,6 @@ class Board:
                 
 
         elif direction == "vertical":
-            print("FAFA")
             count = p.get_y()
             while (self.board[count][p.get_x()].get_letterTile() != None):
                 count -= 1
@@ -348,7 +347,6 @@ class Board:
                     break
             if (len(word) != 1):
                 words.append(word)
-            print("FAFAssss")
             for p in play:
                 count = p.get_x()
                 while (self.board[p.get_y()][count].get_letterTile() != None):
