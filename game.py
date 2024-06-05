@@ -95,18 +95,23 @@ class Bag:
         """
         Gets n LetterTile objects, returns list of the LetterTile objects
         """
-        keys = list(self.bag.keys())
+        letters = []
         # for k in self.bag.keys():
         #     keys.append(k)
+        for k, v in self.bag.items():
+            for i in range(v):
+                letters.append(k)
         sampled_words = []
         for i in range(n):
-            sample = random.choice(keys)
+            sample = random.choice(letters)
             self.bag[sample] -= 1
             self.remainingTiles -= 1
             sampled_words.append(LetterTile(sample))
             if self.bag[sample] == 0:
                 self.bag.pop(sample)
-                keys = list(self.bag.keys())
+                for k, v in self.bag.items():
+                    for i in range(v):
+                        letters.append(k)
         return sampled_words
 
 class Board:
@@ -180,7 +185,8 @@ class Board:
         """
         checks if play is valid or not given the state of the board. play is a list of LetterTile objects. Returns True or False
         """
-           
+        print(self.bag.bag)
+
         for p in play:
             self.set_letterTile(p)
             p.set_put_on_round(self.round)
