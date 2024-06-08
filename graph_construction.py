@@ -150,9 +150,9 @@ def ExtendLeft(Square,Board,hand,play,Direction,words,x,y):
                     hand.insert(m,temp)
                     
             if Direction=="Vertical" and y>0 and Square.get_letterTile()==None and hand:
-                if y>2:
-                    if Board[x][y-2].get_letterTile()!=None:
-                        break
+                print("left play="+play)
+                print(hand)
+                print("i="+hand[m])
                 if wordCheckerReversed.check_word(play+hand[m]) and Board[x][y-1].get_letterTile==None:
                     words.append((play+hand[m])[::-1])
                     print("Reversed True")
