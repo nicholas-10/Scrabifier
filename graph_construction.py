@@ -152,7 +152,7 @@ def ExtendLeft(Square,Board,hand,play,Direction,words,x,y,positions,tempposition
         if x>0:
             ExtendLeft(Board[x-1][y],Board,hand,play+Board[x][y].get_letterTile().get_letter(),"Vertical",words,x-1,y,positions,temppositions)
             print("Left Appended:"+play+Board[x][y].get_letterTile().get_letter())
-            if wordCheckerReversed.check_word(play+Board[x][y].get_letterTile().get_letter()) and Board[x-1][y]==None:
+            if wordCheckerReversed.check_word(play+Board[x][y].get_letterTile().get_letter()) and Board[x-1][y].get_letterTile()==None:
                 words.append((play+Board[x][y].get_letterTile().get_letter())[::-1])
                 positions.append([x,temppositions[0][1]])
                 temppositions.pop(0)
@@ -166,7 +166,7 @@ def ExtendLeft(Square,Board,hand,play,Direction,words,x,y,positions,tempposition
     if Direction == "Horizontal"  and Square.get_letterTile()!=None:
         if y>0:
             ExtendLeft(Board[x][y-1],Board,hand,play+Board[x][y].get_letterTile().get_letter(),"Horizontal",words,x,y-1,positions,temppositions)
-            if wordCheckerReversed.check_word(play+Board[x][y].get_letterTile().get_letter()) and Board[x][y-1]==None:
+            if wordCheckerReversed.check_word(play+Board[x][y].get_letterTile().get_letter()) and Board[x][y-1].get_letterTile()==None:
                 words.append((play+Board[x][y].get_letterTile().get_letter())[::-1])
                 positions.append([y,temppositions[0][1]])
                 temppositions.pop(0)
