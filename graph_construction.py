@@ -271,9 +271,9 @@ def cross_check(Letter,Direction,Board,x,y):
     pass
     word=Letter
     print("Test")
-    if Direction=="Vertical":
+    if Direction=="Horizontal":
         j=1
-        while(y<15):
+        while(y<14):
             if Board[x][y+j].get_letterTile()==None:
                  break
             else:
@@ -290,9 +290,9 @@ def cross_check(Letter,Direction,Board,x,y):
             return True
         else:
             return wordChecker.check_word(word)
-    if Direction=="Horizontal":
+    if Direction=="Vertical":
         j=1
-        while(x<15):
+        while(x<14):
             
             if Board[x+j][y].get_letterTile()==None:
                  break
