@@ -7,10 +7,6 @@ def GADDAGAdder(stringname,array):
     for i in range(1,len(stringname),1):
         array.append(stringname[0:i][::-1]+'+'+stringname[i:len(stringname)])
     array.append(stringname[::-1])
-array=[]
-GADDAGAdder("AARDVARK",array)
-print(array)
-
 wordCheckerReversed=g.Dictionary("revdictionary.txt")
 
 #Row/Column Checker
@@ -22,7 +18,6 @@ def ExtendRight(Square,Board,hand,play,Direction,allsuffixes,hands,words,x,y,lef
     print("play="+play)
     if Square.get_letterTile()!=None and Direction=="Horizontal":
         if y<15:
-            print("Down not empty")
             ExtendRight(Board[x][y+1],Board,hand,play+Board[x][y].get_letterTile().get_letter(),Direction,allsuffixes,hands,words,x,y+1,lefttrail)
         if wordCheckerReversed.dictionary.t.has_subtrie((play+Board[x][y].get_letterTile().get_letter())[::-1])==True and Board[x][y+1].get_letterTile()==None :
             allsuffixes.append((play+Board[x][y].get_letterTile().get_letter())[::-1])
@@ -30,7 +25,6 @@ def ExtendRight(Square,Board,hand,play,Direction,allsuffixes,hands,words,x,y,lef
         return
     if Square.get_letterTile()!=None and Direction=="Vertical":
         if x<15:
-            print("Right not empty")
             ExtendRight(Board[x+1][y],Board,hand,play+Board[x][y].get_letterTile().get_letter(),Direction,allsuffixes,hands,words,x+1,y,lefttrail)
         if wordCheckerReversed.dictionary.t.has_subtrie((play+Board[x][y].get_letterTile().get_letter())[::-1])==True and Board[x+1][y].get_letterTile()==None:
             allsuffixes.append((play+Board[x][y].get_letterTile().get_letter())[::-1])
