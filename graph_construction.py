@@ -76,7 +76,7 @@ def ExtendRight(Square,Board,hand,play,Direction,allsuffixes,hands,words,x,y,lef
                         positions.append([initial,y])
                 if wordCheckerReversed.dictionary.t.has_subtrie((play+hand[i])[::-1])==True and Board[x][y+1].get_letterTile()==None and cross_check(hand[i],"Horizontal",Board,x,y):
                     print("Check Reversed")
-                    temp=hand[i]
+                    temp=hand[i]https://github.com/nicholas-10/Scrabifier/blob/master/graph_construction.py
                     hand.pop(i)
                     allsuffixes.append((play+temp)[::-1])
                     hands.append(copy.deepcopy(hand))
@@ -214,7 +214,7 @@ def ExtendLeft(Square,Board,hand,play,Direction,words,x,y,positions,tempposition
                     ExtendLeft(Board[x][y-1],Board,hand,play+temp,Direction,words,x,y-1,positions,temppositions)
                     hand.insert(m,temp)
                     print("Appended")
-            if y==0 and wordCheckerReversed.check_word(play+hand[m]) and wordCheckerReversed.check_word(play+hand[m]):
+            if y==0 and wordCheckerReversed.check_word(play+hand[m]) and cross_check(hand[m],"Horizontal",Board,x,y):
                 words.append((play+hand[m])[::-1])
                 positions.append([y,temppositions[0][1]])
                 temppositions.pop(0)
@@ -304,7 +304,7 @@ def cross_check(Letter,Direction,Board,x,y):
             if Board[x-j][y].get_letterTile()==None:
                 break
             else:
-                word=word+Board[x-j][y].get_letterTile().get_letter()
+                word=Board[x-j][y].get_letterTile().get_letter()+word
                 j=j+1
         if len(word)<=1:
             return True
