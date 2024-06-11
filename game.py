@@ -102,8 +102,9 @@ class Bag:
             for i in range(v):
                 letters.append(k)
         sampled_words = []
-        for i in range(n):
+        for i in range(min(n, len(letters))):
             sample = random.choice(letters)
+            letters.remove(sample)
             self.bag[sample] -= 1
             self.remainingTiles -= 1
             sampled_words.append(LetterTile(sample))
@@ -686,8 +687,11 @@ class Board:
                 hand.append(l)
             playerMoved.set_hand(hand)
             self.round += 1
+            if len(self.players[self.playerToMove].get_hand()) == 0:
+                print("Game End")
+                print("Player 1 points: " + str(self.players[0].get_score()))
+                print("Player 2 points: " + str(self.players[1].get_score()))
             self.switchPlayerToMove()
-            # self.playerToMove = (self.round + 1) % 2
         self.play.clear()
         return pts
     def print_board(self):

@@ -22,3 +22,4 @@ class Player:
             print(h.get_letter(), end = "")
             print("|", end = "")
         print()
+    
