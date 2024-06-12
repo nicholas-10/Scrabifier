@@ -203,7 +203,7 @@ def ExtendLeft(Square,Board,hand,play,Direction,words,x,y,positions,tempposition
             print(hand)
             print("i="+hand[m])
             if y>0:
-                if wordCheckerReversed.check_word(play+hand[m]) and Board[x][y-1].get_letterTile==None and wordCheckerReversed.check_word(play+hand[m]):
+                if wordCheckerReversed.check_word(play+hand[m]) and Board[x][y-1].get_letterTile()==None and wordCheckerReversed.check_word(play+hand[m]):
                     words.append((play+hand[m])[::-1])
                     positions.append( [y,temppositions[0][1]])
                     temppositions.pop(0)
